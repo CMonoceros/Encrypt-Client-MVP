@@ -10,6 +10,7 @@ import com.squareup.leakcanary.LeakCanary;
 import com.squareup.leakcanary.RefWatcher;
 
 import dhu.cst.zjm.encryptmvp.injector.component.ApplicationComponent;
+import dhu.cst.zjm.encryptmvp.injector.component.DaggerApplicationComponent;
 import dhu.cst.zjm.encryptmvp.injector.module.ApplicationModule;
 import dhu.cst.zjm.encryptmvp.injector.module.NetworkModule;
 
@@ -26,7 +27,7 @@ public class MyApplication extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
-        mContext=getApplicationContext();
+        mContext = getApplicationContext();
         setStrictMode();
         setCrashHandler();
         initStetho();
@@ -34,33 +35,49 @@ public class MyApplication extends Application {
         setupInjector();
     }
 
-    public static Context getContext(){
-        return mContext;
-    }
-
-    private void setStrictMode(){
+    /**
+     *
+     */
+    private void setStrictMode() {
         if (BuildConfig.DEBUG && Build.VERSION.SDK_INT >= Build.VERSION_CODES.GINGERBREAD) {
             StrictMode.setThreadPolicy(new StrictMode.ThreadPolicy.Builder().detectAll().penaltyLog().build());
             StrictMode.setVmPolicy(new StrictMode.VmPolicy.Builder().detectAll().penaltyLog().build());
         }
     }
 
+    /**
+     *
+     */
     private void setCrashHandler() {
         CrashHandler crashHandler = CrashHandler.getInstance(this);
         Thread.setDefaultUncaughtExceptionHandler(crashHandler);
     }
 
+    /**
+     *
+     */
     private void initStetho() {
         Stetho.initializeWithDefaults(this);
     }
 
+    /**
+     *
+     */
     private void initLeakCanary() {
-        mRefWatcher= LeakCanary.install(this);
+        mRefWatcher = LeakCanary.install(this);
     }
 
     private void setupInjector() {
         mApplicationComponent = DaggerApplicationComponent.builder().
                 applicationModule(new ApplicationModule(this))
                 .networkModule(new NetworkModule(this)).build();
+    }
+
+    public ApplicationComponent getApplicationComponent() {
+        return mApplicationComponent;
+    }
+
+    public static Context getContext() {
+        return mContext;
     }
 }
