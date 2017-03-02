@@ -10,9 +10,15 @@ import dhu.cst.zjm.encryptmvp.mvp.view.BaseView;
 
 public interface LoginContract {
     interface View extends BaseView {
-        void getLoginState(boolean state);
+        void getLoginState(User user);
 
-        void loginInfoError();
+        void loginNetworkError();
+
+        void loginPasswordError();
+
+        void loginExistError();
+
+        void loginEmptyError();
     }
 
     interface Presenter extends BasePresenter<View> {

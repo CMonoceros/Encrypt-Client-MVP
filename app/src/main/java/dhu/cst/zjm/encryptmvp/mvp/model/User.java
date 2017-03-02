@@ -2,11 +2,13 @@ package dhu.cst.zjm.encryptmvp.mvp.model;
 
 import com.google.gson.annotations.Expose;
 
+import java.io.Serializable;
+
 /**
  * Created by zjm on 2017/2/24.
  */
 
-public class User {
+public class User implements Serializable{
     @Expose
     private int id;
     @Expose
@@ -14,23 +16,23 @@ public class User {
     @Expose
     private String password;
     @Expose
-    private boolean isLogin;
+    private int isLogin;
 
     public User(String name, String password) {
         this.name = name;
         this.password = password;
     }
 
-    public User(int id, String name) {
+    public User(int id, String password) {
         this.id = id;
-        this.name = name;
+        this.password = password;
     }
 
-    public void setIsLogin(boolean state) {
+    public void setIsLogin(int state) {
         isLogin = state;
     }
 
-    public boolean getIsLogin() {
+    public int getIsLogin() {
         return isLogin;
     }
 

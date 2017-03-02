@@ -57,7 +57,7 @@ public class MyApplication extends Application {
      *
      */
     private void initStetho() {
-        Stetho.initializeWithDefaults(this);
+        //Stetho.initializeWithDefaults(this);
     }
 
     /**

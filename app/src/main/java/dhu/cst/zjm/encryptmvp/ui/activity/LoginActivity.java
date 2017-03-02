@@ -1,6 +1,7 @@
 package dhu.cst.zjm.encryptmvp.ui.activity;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
@@ -19,6 +20,8 @@ import dhu.cst.zjm.encryptmvp.injector.component.LoginActivityComponent;
 import dhu.cst.zjm.encryptmvp.injector.module.ActivityModule;
 import dhu.cst.zjm.encryptmvp.injector.module.LoginModule;
 import dhu.cst.zjm.encryptmvp.mvp.contract.LoginContract;
+import dhu.cst.zjm.encryptmvp.mvp.model.User;
+import dhu.cst.zjm.encryptmvp.util.IntentUtil;
 
 /**
  * Created by zjm on 2017/2/24.
@@ -29,9 +32,9 @@ public class LoginActivity extends BaseActivity implements LoginContract.View {
     @Inject
     LoginContract.Presenter loginContractPresenter;
     @BindView(R.id.et_login_id)
-    EditText et_login_id;
+    public EditText et_login_id;
     @BindView(R.id.et_login_password)
-    EditText et_login_password;
+    public EditText et_login_password;
 
 
     @Override
@@ -58,22 +61,50 @@ public class LoginActivity extends BaseActivity implements LoginContract.View {
     }
 
     @OnClick(R.id.b_login_internet)
-    private void loginInternet() {
+    public void loginInternet() {
         loginContractPresenter.loginInternet(et_login_id.getText().toString() + "", et_login_password.getText().toString() + "");
     }
 
     @OnClick(R.id.b_register)
-    private void register() {
-
+    public void register() {
+        IntentUtil.intentToRegisterActivity(this);
     }
 
     @Override
-    public void getLoginState(boolean state) {
-
+    public void getLoginState(User user) {
+        switch (user.getIsLogin()){
+            case 1:
+                IntentUtil.intentToMenuActivity(this,user);
+                break;
+            case 2:
+                loginExistError();
+                break;
+            case 3:
+                loginPasswordError();
+                break;
+        }
     }
 
     @Override
-    public void loginInfoError() {
+    public void loginNetworkError() {
+        Toast.makeText(this, "Network Error.Please try again later!",
+                Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void loginPasswordError() {
+        Toast.makeText(this, "Password Wrong.Please confirm your password!",
+                Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void loginExistError() {
+        Toast.makeText(this, "User doesn't exist.Please confirm your id!",
+                Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void loginEmptyError() {
         Toast.makeText(this, "ID or Password can not be empty!",
                 Toast.LENGTH_SHORT).show();
     }

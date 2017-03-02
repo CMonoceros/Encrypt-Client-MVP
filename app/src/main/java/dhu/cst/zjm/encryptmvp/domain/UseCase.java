@@ -1,5 +1,6 @@
 package dhu.cst.zjm.encryptmvp.domain;
 
+
 import rx.Observable;
 
 /**

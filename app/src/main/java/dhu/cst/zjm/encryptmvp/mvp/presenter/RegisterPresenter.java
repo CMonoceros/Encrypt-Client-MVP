@@ -1,8 +1,9 @@
 package dhu.cst.zjm.encryptmvp.mvp.presenter;
 
+import android.util.Log;
 
-import dhu.cst.zjm.encryptmvp.domain.LoginInternetUseCase;
-import dhu.cst.zjm.encryptmvp.mvp.contract.LoginContract;
+import dhu.cst.zjm.encryptmvp.domain.RegisterTryUseCase;
+import dhu.cst.zjm.encryptmvp.mvp.contract.RegisterContract;
 import dhu.cst.zjm.encryptmvp.mvp.model.User;
 import rx.Observer;
 import rx.Subscription;
@@ -11,20 +12,21 @@ import rx.schedulers.Schedulers;
 import rx.subscriptions.CompositeSubscription;
 
 /**
- * Created by zjm on 2017/2/24.
+ * Created by zjm on 2017/3/1.
  */
 
-public class LoginPresenter implements LoginContract.Presenter {
-    private LoginInternetUseCase mLoginInternetUseCase;
-    private LoginContract.View mView;
+public class RegisterPresenter implements RegisterContract.Presenter {
+
+    private RegisterTryUseCase mRegisterTryUseCase;
+    private RegisterContract.View mView;
     private CompositeSubscription mCompositeSubscription;
 
-    public LoginPresenter(LoginInternetUseCase loginInternetUseCase) {
-        this.mLoginInternetUseCase = loginInternetUseCase;
+    public RegisterPresenter(RegisterTryUseCase mRegisterTryUseCase) {
+        this.mRegisterTryUseCase = mRegisterTryUseCase;
     }
 
     @Override
-    public void attachView(LoginContract.View BaseView) {
+    public void attachView(RegisterContract.View BaseView) {
         mView = BaseView;
         mCompositeSubscription = new CompositeSubscription();
     }
@@ -37,17 +39,21 @@ public class LoginPresenter implements LoginContract.Presenter {
     }
 
     @Override
-    public void loginInternet(String id, String password) {
+    public void registerTry(String name, String password, String confirmPassword) {
         User user;
-        try {
-            user = new User(Integer.parseInt(id), password);
-        } catch (Exception e) {
-            e.printStackTrace();
-            mView.loginEmptyError();
+        if (!password.equals(confirmPassword)) {
+            mView.confirmError();
             return;
         }
-        mLoginInternetUseCase.setUser(user);
-        Subscription subscription = mLoginInternetUseCase.execute()
+        try {
+            user = new User(name, password);
+        } catch (Exception e) {
+            e.printStackTrace();
+            mView.registerEmptyError();
+            return;
+        }
+        mRegisterTryUseCase.setUser(user);
+        Subscription subscription = mRegisterTryUseCase.execute()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Observer<User>() {
@@ -58,16 +64,21 @@ public class LoginPresenter implements LoginContract.Presenter {
 
                     @Override
                     public void onError(Throwable e) {
-                        mView.loginNetworkError();
+                        mView.registerNetworkError();
                     }
 
                     @Override
                     public void onNext(User user) {
-                        mView.getLoginState(user);
+                        switch (user.getId()) {
+                            case -1:
+                                mView.registerNetworkError();
+                                break;
+                            default:
+                                mView.registerSuccess(user.getId());
+                        }
                     }
 
                 });
         mCompositeSubscription.add(subscription);
-
     }
 }

@@ -8,5 +8,5 @@ public interface BaseUrl {
     String BASEHTTP = "http://";
     String BASEWEBSOCKET = "ws://";
     String BASEPORT = ":8080/Encrypt/";
-    String BASEIP = "10.202.119.28";
+    String BASEIP = "192.168.31.219";
 }
