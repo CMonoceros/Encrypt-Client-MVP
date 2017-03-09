@@ -18,12 +18,12 @@ import dhu.cst.zjm.encryptmvp.mvp.model.ServerFile;
  * Created by zjm on 3/2/2017.
  */
 
-public class MenuFileListAdapter extends RecyclerView.Adapter<MenuFileListAdapter.MyViewHolder> {
+public class FileListAdapter extends RecyclerView.Adapter<FileListAdapter.MyViewHolder> {
     private List<ServerFile> list = new ArrayList<>();
     private LayoutInflater mInflater;
     private OnItemClickListener listener;
 
-    public MenuFileListAdapter(Context mContext, List<ServerFile> list) {
+    public FileListAdapter(Context mContext, List<ServerFile> list) {
         mInflater = LayoutInflater.from(mContext);
         this.list = list;
     }

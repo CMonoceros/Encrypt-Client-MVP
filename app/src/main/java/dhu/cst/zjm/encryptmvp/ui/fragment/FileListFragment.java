@@ -1,5 +1,7 @@
 package dhu.cst.zjm.encryptmvp.ui.fragment;
 
+import android.app.Activity;
+import android.app.FragmentTransaction;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.AppBarLayout;
@@ -25,34 +27,37 @@ import butterknife.ButterKnife;
 import dhu.cst.zjm.encryptmvp.MyApplication;
 import dhu.cst.zjm.encryptmvp.R;
 import dhu.cst.zjm.encryptmvp.injector.component.ApplicationComponent;
-import dhu.cst.zjm.encryptmvp.injector.component.DaggerMenuFileListFragmentComponent;
-import dhu.cst.zjm.encryptmvp.injector.component.MenuFileListFragmentComponent;
+import dhu.cst.zjm.encryptmvp.injector.component.DaggerFileListFragmentComponent;
+import dhu.cst.zjm.encryptmvp.injector.component.FileListFragmentComponent;
 import dhu.cst.zjm.encryptmvp.injector.module.ActivityModule;
-import dhu.cst.zjm.encryptmvp.injector.module.MenuFileListModule;
-import dhu.cst.zjm.encryptmvp.mvp.contract.MenuFileListContract;
+import dhu.cst.zjm.encryptmvp.injector.module.FileListModule;
+import dhu.cst.zjm.encryptmvp.mvp.contract.FileListContract;
 import dhu.cst.zjm.encryptmvp.mvp.model.ServerFile;
 import dhu.cst.zjm.encryptmvp.mvp.model.User;
-import dhu.cst.zjm.encryptmvp.ui.adapter.MenuFileListAdapter;
+import dhu.cst.zjm.encryptmvp.ui.activity.MenuActivity;
+import dhu.cst.zjm.encryptmvp.ui.adapter.FileListAdapter;
 import dhu.cst.zjm.encryptmvp.util.appbarlayout.SwipyAppBarScrollListener;
 
 /**
  * Created by zjm on 3/2/2017.
  */
 
-public class MenuFileListFragment extends BaseFragment implements MenuFileListContract.View {
+public class FileListFragment extends BaseFragment implements FileListContract.View {
+    public static final String EXTRA_ENCRYPT_TYPE_SERVERFILE="extra_encrypt_type_serverfile";
+
     @Inject
-    MenuFileListContract.Presenter menuContractPresenter;
+    FileListContract.Presenter fileListPresenter;
     @BindView(R.id.rcv_menu_file_list)
     RecyclerView rcv_menu_file_list;
     @BindView(R.id.ptrv_menu_file_list)
     PullToRefreshView ptrv_menu_file_list;
-    ImageView iv_menu_toolbar;
     AppBarLayout abl_ui_menu;
+    ImageView iv_menu_toolbar;
     CollapsingToolbarLayout ctl_menu;
 
     private User user;
     private List<ServerFile> sourceServerFileList;
-    private MenuFileListAdapter menuFileListAdapter;
+    private FileListAdapter fileListAdapter;
 
     @Override
     public void setUser(User user) {
@@ -67,7 +72,7 @@ public class MenuFileListFragment extends BaseFragment implements MenuFileListCo
                 ptrv_menu_file_list.postDelayed(new Runnable() {
                     @Override
                     public void run() {
-                        menuContractPresenter.getMenuFileList(user.getId());
+                        fileListPresenter.getMenuFileList(user.getId());
                         ptrv_menu_file_list.setRefreshing(false);
                     }
                 }, 1000);
@@ -75,17 +80,17 @@ public class MenuFileListFragment extends BaseFragment implements MenuFileListCo
         });
 
         sourceServerFileList = new ArrayList<ServerFile>();
-        menuContractPresenter.getMenuFileList(user.getId());
+        fileListPresenter.getMenuFileList(user.getId());
 
         rcv_menu_file_list.setLayoutManager(new StaggeredGridLayoutManager(1, StaggeredGridLayoutManager.VERTICAL));
-        menuFileListAdapter = new MenuFileListAdapter(getActivity(), sourceServerFileList);
-        menuFileListAdapter.setOnItemClickListener(new MenuFileListAdapter.OnItemClickListener() {
+        fileListAdapter = new FileListAdapter(getActivity(), sourceServerFileList);
+        fileListAdapter.setOnItemClickListener(new FileListAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(int position) {
-                //menu_file_list_interface.fileListItemClick(sourceServerFileList.get(position));
+                fileListOnClick(sourceServerFileList.get(position));
             }
         });
-        rcv_menu_file_list.setAdapter(menuFileListAdapter);
+        rcv_menu_file_list.setAdapter(fileListAdapter);
     }
 
     private void setupActivityView() {
@@ -113,7 +118,15 @@ public class MenuFileListFragment extends BaseFragment implements MenuFileListCo
         for (ServerFile sf : list) {
             sourceServerFileList.add(sf);
         }
-        menuFileListAdapter.notifyDataSetChanged();
+        fileListAdapter.notifyDataSetChanged();
+    }
+
+    @Override
+    public void fileListOnClick(ServerFile serverFile) {
+        MenuActivity menuActivity=(MenuActivity)getActivity();
+        menuActivity.fileListClick(serverFile);
+
+
     }
 
     @Override
@@ -124,14 +137,14 @@ public class MenuFileListFragment extends BaseFragment implements MenuFileListCo
     @Override
     protected void injectDependences() {
         ApplicationComponent applicationComponent = ((MyApplication) getActivity().getApplication()).getApplicationComponent();
-        MenuFileListFragmentComponent menuFileListFragmentComponent = DaggerMenuFileListFragmentComponent.builder()
+        FileListFragmentComponent fileListFragmentComponent = DaggerFileListFragmentComponent.builder()
                 .applicationComponent(applicationComponent)
                 .activityModule(new ActivityModule(getActivity()))
-                .menuFileListModule(new MenuFileListModule())
+                .fileListModule(new FileListModule())
                 .build();
-        menuFileListFragmentComponent.inject(this);
+        fileListFragmentComponent.inject(this);
 
-        menuContractPresenter.attachView(this);
+        fileListPresenter.attachView(this);
     }
 
     @Override

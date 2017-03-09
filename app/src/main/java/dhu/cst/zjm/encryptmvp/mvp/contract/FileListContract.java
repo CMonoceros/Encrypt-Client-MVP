@@ -11,8 +11,8 @@ import dhu.cst.zjm.encryptmvp.mvp.view.BaseView;
  * Created by zjm on 3/2/2017.
  */
 
-public interface MenuFileListContract {
-    interface View extends BaseView{
+public interface FileListContract {
+    interface View extends BaseView {
 
         void setUser(User user);
 
@@ -22,9 +22,11 @@ public interface MenuFileListContract {
 
         void updateSourceList(List<ServerFile> list);
 
+        void fileListOnClick(ServerFile serverFile);
+
     }
 
-    interface Presenter extends BasePresenter<View>{
+    interface Presenter extends BasePresenter<View> {
         void getMenuFileList(int id);
 
     }

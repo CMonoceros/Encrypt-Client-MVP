@@ -1,11 +1,9 @@
 package dhu.cst.zjm.encryptmvp.mvp.presenter;
 
-import android.util.Log;
-
 import java.util.List;
 
-import dhu.cst.zjm.encryptmvp.domain.GetMenuFileListUseCase;
-import dhu.cst.zjm.encryptmvp.mvp.contract.MenuFileListContract;
+import dhu.cst.zjm.encryptmvp.domain.GetFileListUseCase;
+import dhu.cst.zjm.encryptmvp.mvp.contract.FileListContract;
 import dhu.cst.zjm.encryptmvp.mvp.model.ServerFile;
 import rx.Observer;
 import rx.Subscription;
@@ -17,18 +15,18 @@ import rx.subscriptions.CompositeSubscription;
  * Created by zjm on 3/2/2017.
  */
 
-public class MenuFileListPresenter implements MenuFileListContract.Presenter {
-    private GetMenuFileListUseCase mGetMenuFileListUseCase;
-    private MenuFileListContract.View mView;
+public class FileListPresenter implements FileListContract.Presenter {
+    private GetFileListUseCase mGetFileListUseCase;
+    private FileListContract.View mView;
     private CompositeSubscription mCompositeSubscription;
 
-    public MenuFileListPresenter(GetMenuFileListUseCase getMenuFileListUseCase) {
-        this.mGetMenuFileListUseCase = getMenuFileListUseCase;
+    public FileListPresenter(GetFileListUseCase getFileListUseCase) {
+        this.mGetFileListUseCase = getFileListUseCase;
     }
 
 
     @Override
-    public void attachView(MenuFileListContract.View BaseView) {
+    public void attachView(FileListContract.View BaseView) {
         this.mView = BaseView;
         mCompositeSubscription = new CompositeSubscription();
     }
@@ -42,8 +40,8 @@ public class MenuFileListPresenter implements MenuFileListContract.Presenter {
 
     @Override
     public void getMenuFileList(int id) {
-        mGetMenuFileListUseCase.setId(id+"");
-        Subscription subscription = mGetMenuFileListUseCase.execute()
+        mGetFileListUseCase.setId(id+"");
+        Subscription subscription = mGetFileListUseCase.execute()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Observer<List<ServerFile>>() {
