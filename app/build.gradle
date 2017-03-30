@@ -70,5 +70,7 @@ dependencies {
 
     compile "com.daimajia.swipelayout:library:1.2.0@aar"
 
+    compile group: 'commons-codec', name: 'commons-codec', version: '1.10'
+
     testCompile 'junit:junit:4.12'
 }

@@ -16,12 +16,10 @@ public interface LoginContract {
 
         void loginPasswordError();
 
-        void loginExistError();
-
         void loginEmptyError();
     }
 
     interface Presenter extends BasePresenter<View> {
-        void loginInternet(String id, String password);
+        void login(String id, String password);
     }
 }

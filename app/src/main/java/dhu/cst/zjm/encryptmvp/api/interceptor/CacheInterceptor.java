@@ -1,5 +1,7 @@
 package dhu.cst.zjm.encryptmvp.api.interceptor;
 
+import android.util.Log;
+
 import java.io.IOException;
 
 import dhu.cst.zjm.encryptmvp.MyApplication;

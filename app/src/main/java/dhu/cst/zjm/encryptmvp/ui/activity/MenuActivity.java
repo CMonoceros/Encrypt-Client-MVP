@@ -18,7 +18,6 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import javax.crypto.interfaces.PBEKey;
 import javax.inject.Inject;
 
 import butterknife.BindView;
@@ -29,17 +28,16 @@ import dhu.cst.zjm.encryptmvp.injector.component.ApplicationComponent;
 import dhu.cst.zjm.encryptmvp.injector.component.DaggerMenuActivityComponent;
 import dhu.cst.zjm.encryptmvp.injector.component.MenuActivityComponent;
 import dhu.cst.zjm.encryptmvp.injector.module.ActivityModule;
-import dhu.cst.zjm.encryptmvp.injector.module.LoginModule;
 import dhu.cst.zjm.encryptmvp.injector.module.MenuModule;
 import dhu.cst.zjm.encryptmvp.mvp.contract.MenuContract;
-import dhu.cst.zjm.encryptmvp.mvp.model.ServerFile;
+import dhu.cst.zjm.encryptmvp.mvp.model.File;
 import dhu.cst.zjm.encryptmvp.mvp.model.User;
 import dhu.cst.zjm.encryptmvp.ui.fragment.FileListFragment;
 import dhu.cst.zjm.encryptmvp.ui.fragment.FileTypeFragment;
 import dhu.cst.zjm.encryptmvp.util.IntentUtil;
 import dhu.cst.zjm.encryptmvp.util.ProgressListener;
 
-import static dhu.cst.zjm.encryptmvp.util.Get_File_From_Uri.getPath;
+import static dhu.cst.zjm.encryptmvp.util.FileUtil.getPath;
 
 /**
  * Created by zjm on 3/2/2017.
@@ -126,7 +124,6 @@ public class MenuActivity extends BaseActivity implements MenuContract.View {
 
         pd_file_progress = new ProgressDialog(this);
         pd_file_progress.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
-        //pd_file_progress.setMax(100);
         pd_file_progress.setIndeterminate(false);
         pd_file_progress.setProgress(0);
         pd_file_progress.setButton(DialogInterface.BUTTON_POSITIVE, "确定", new DialogInterface.OnClickListener() {
@@ -171,7 +168,12 @@ public class MenuActivity extends BaseActivity implements MenuContract.View {
         switch (requestCode) {
             case IntentUtil.EXTRA_CHOOSE_FILE:
                 if (resultCode == Activity.RESULT_OK) {
-                    menuContractPresenter.uploadFile(user.getId(), getPath(this, data.getData()), new ProgressListener() {
+                    String filePath = getPath(this, data.getData());
+                    java.io.File file = new java.io.File(filePath);
+                    if (!file.exists()) {
+                        chooseFileError();
+                    }
+                    menuContractPresenter.uploadFile(user.getId(), file, new ProgressListener() {
                         @Override
                         public void onProgress(long progress, long total, boolean done) {
                             pd_file_progress.setMax((int) total);
@@ -201,10 +203,10 @@ public class MenuActivity extends BaseActivity implements MenuContract.View {
     }
 
     @Override
-    public void fileListClick(ServerFile serverFile) {
+    public void fileListClick(File file) {
         ft_menu_main = fm_menu_main.beginTransaction();
         FileTypeFragment fileTypeFragment = new FileTypeFragment();
-        fileTypeFragment.setServerFile(serverFile);
+        fileTypeFragment.setFile(file);
         ft_menu_main.replace(R.id.rl_Menu_Main, fileTypeFragment);
         ft_menu_main.addToBackStack(null);
         ft_menu_main.commit();
@@ -212,12 +214,14 @@ public class MenuActivity extends BaseActivity implements MenuContract.View {
 
     @Override
     public void chooseFileError() {
+        pd_file_progress.dismiss();
         Toast.makeText(this, "Choose File Error.Please try again later!",
                 Toast.LENGTH_SHORT).show();
     }
 
     @Override
     public void uploadNetworkError() {
+        pd_file_progress.dismiss();
         Toast.makeText(this, "Network Error.Please try again later!",
                 Toast.LENGTH_SHORT).show();
     }
@@ -225,6 +229,13 @@ public class MenuActivity extends BaseActivity implements MenuContract.View {
     @Override
     public void uploadSuccess() {
         Toast.makeText(this, "Upload success!",
+                Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void uploadFailed() {
+        pd_file_progress.dismiss();
+        Toast.makeText(this, "Upload failed.Please try again later!",
                 Toast.LENGTH_SHORT).show();
     }
 }

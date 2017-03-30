@@ -4,11 +4,13 @@ import java.util.List;
 import java.util.Map;
 
 import dhu.cst.zjm.encryptmvp.api.ApiService;
+import dhu.cst.zjm.encryptmvp.mvp.model.EncryptRelation;
 import dhu.cst.zjm.encryptmvp.mvp.model.EncryptType;
-import dhu.cst.zjm.encryptmvp.mvp.model.ServerFile;
+import dhu.cst.zjm.encryptmvp.mvp.model.File;
 import dhu.cst.zjm.encryptmvp.mvp.model.User;
-import dhu.cst.zjm.encryptmvp.util.UploadFileRequestBody;
+import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
+import okhttp3.ResponseBody;
 import retrofit2.Retrofit;
 import rx.Observable;
 
@@ -24,19 +26,25 @@ public class Repository implements BaseRepository {
         mApiService = retrofit.create(ApiService.class);
     }
 
+
     @Override
-    public Observable<User> loginInternet(User user) {
-        return mApiService.Login_Internet(user);
+    public Observable<User> login(User user) {
+        return mApiService.login(user);
     }
 
     @Override
-    public Observable<User> registerTry(User user) {
-        return mApiService.registerTry(user);
+    public Observable<User> register(User user) {
+        return mApiService.register(user);
     }
 
     @Override
-    public Observable<List<ServerFile>> getFileList(String id) {
+    public Observable<List<File>> getFileList(String id) {
         return mApiService.getFileList(id);
+    }
+
+    @Override
+    public Observable<List<File>> getFileListByPaper(Map<String, String> params) {
+        return mApiService.getFileListByPaper(params);
     }
 
     @Override
@@ -45,9 +53,17 @@ public class Repository implements BaseRepository {
     }
 
     @Override
-    public Observable<String> uploadFile(String id, Map<String, UploadFileRequestBody> fileMap) {
-        return mApiService.uploadFile(id, fileMap);
+    public Observable<EncryptRelation> encryptFile(Map<String, String> params) {
+        return mApiService.encryptFile(params);
     }
 
+    @Override
+    public Observable<File> uploadFile(Map<String,RequestBody> map) {
+        return mApiService.uploadFile(map);
+    }
 
+    @Override
+    public Observable<ResponseBody> downloadFile(String downloadId) {
+        return mApiService.downloadFile(downloadId);
+    }
 }

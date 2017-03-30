@@ -63,7 +63,6 @@ public class RegisterActivity extends BaseActivity implements RegisterContract.V
 
     @OnClick(R.id.b_register_ok)
     public void registerTry() {
-        Log.i(et_register_name.getText().toString() + "", et_register_password.getText().toString() + " " + et_register_confirmPassword.getText().toString() + "");
         registerContractPresenter.registerTry(et_register_name.getText().toString() + "", et_register_password.getText().toString() + "", et_register_confirmPassword.getText().toString() + "");
     }
 

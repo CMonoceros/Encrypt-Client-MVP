@@ -1,14 +1,11 @@
 package dhu.cst.zjm.encryptmvp.ui.fragment;
 
-import android.app.Activity;
-import android.app.FragmentTransaction;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -32,7 +29,7 @@ import dhu.cst.zjm.encryptmvp.injector.component.FileListFragmentComponent;
 import dhu.cst.zjm.encryptmvp.injector.module.ActivityModule;
 import dhu.cst.zjm.encryptmvp.injector.module.FileListModule;
 import dhu.cst.zjm.encryptmvp.mvp.contract.FileListContract;
-import dhu.cst.zjm.encryptmvp.mvp.model.ServerFile;
+import dhu.cst.zjm.encryptmvp.mvp.model.File;
 import dhu.cst.zjm.encryptmvp.mvp.model.User;
 import dhu.cst.zjm.encryptmvp.ui.activity.MenuActivity;
 import dhu.cst.zjm.encryptmvp.ui.adapter.FileListAdapter;
@@ -43,7 +40,6 @@ import dhu.cst.zjm.encryptmvp.util.appbarlayout.SwipyAppBarScrollListener;
  */
 
 public class FileListFragment extends BaseFragment implements FileListContract.View {
-    public static final String EXTRA_ENCRYPT_TYPE_SERVERFILE="extra_encrypt_type_serverfile";
 
     @Inject
     FileListContract.Presenter fileListPresenter;
@@ -56,8 +52,10 @@ public class FileListFragment extends BaseFragment implements FileListContract.V
     CollapsingToolbarLayout ctl_menu;
 
     private User user;
-    private List<ServerFile> sourceServerFileList;
+    private List<File> sourceFileList;
     private FileListAdapter fileListAdapter;
+    private int fileListRows;
+    private int fileListPaper;
 
     @Override
     public void setUser(User user) {
@@ -79,15 +77,15 @@ public class FileListFragment extends BaseFragment implements FileListContract.V
             }
         });
 
-        sourceServerFileList = new ArrayList<ServerFile>();
+        sourceFileList = new ArrayList<File>();
         fileListPresenter.getMenuFileList(user.getId());
 
         rcv_menu_file_list.setLayoutManager(new StaggeredGridLayoutManager(1, StaggeredGridLayoutManager.VERTICAL));
-        fileListAdapter = new FileListAdapter(getActivity(), sourceServerFileList);
+        fileListAdapter = new FileListAdapter(getActivity(), sourceFileList);
         fileListAdapter.setOnItemClickListener(new FileListAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(int position) {
-                fileListOnClick(sourceServerFileList.get(position));
+                fileListOnClick(sourceFileList.get(position));
             }
         });
         rcv_menu_file_list.setAdapter(fileListAdapter);
@@ -113,20 +111,18 @@ public class FileListFragment extends BaseFragment implements FileListContract.V
     }
 
     @Override
-    public void updateSourceList(List<ServerFile> list) {
-        sourceServerFileList.clear();
-        for (ServerFile sf : list) {
-            sourceServerFileList.add(sf);
+    public void updateSourceList(List<File> list) {
+        sourceFileList.clear();
+        for (File sf : list) {
+            sourceFileList.add(sf);
         }
         fileListAdapter.notifyDataSetChanged();
     }
 
     @Override
-    public void fileListOnClick(ServerFile serverFile) {
+    public void fileListOnClick(File file) {
         MenuActivity menuActivity=(MenuActivity)getActivity();
-        menuActivity.fileListClick(serverFile);
-
-
+        menuActivity.fileListClick(file);
     }
 
     @Override

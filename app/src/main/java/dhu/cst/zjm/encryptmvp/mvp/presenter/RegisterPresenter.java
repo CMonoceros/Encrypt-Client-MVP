@@ -1,8 +1,9 @@
 package dhu.cst.zjm.encryptmvp.mvp.presenter;
 
-import android.util.Log;
+import org.apache.commons.codec.binary.Hex;
+import org.apache.commons.codec.digest.DigestUtils;
 
-import dhu.cst.zjm.encryptmvp.domain.RegisterTryUseCase;
+import dhu.cst.zjm.encryptmvp.domain.UserUseCase;
 import dhu.cst.zjm.encryptmvp.mvp.contract.RegisterContract;
 import dhu.cst.zjm.encryptmvp.mvp.model.User;
 import rx.Observer;
@@ -17,12 +18,12 @@ import rx.subscriptions.CompositeSubscription;
 
 public class RegisterPresenter implements RegisterContract.Presenter {
 
-    private RegisterTryUseCase mRegisterTryUseCase;
+    private UserUseCase mUserUseCase;
     private RegisterContract.View mView;
     private CompositeSubscription mCompositeSubscription;
 
-    public RegisterPresenter(RegisterTryUseCase mRegisterTryUseCase) {
-        this.mRegisterTryUseCase = mRegisterTryUseCase;
+    public RegisterPresenter(UserUseCase userUseCase) {
+        this.mUserUseCase = userUseCase;
     }
 
     @Override
@@ -46,14 +47,15 @@ public class RegisterPresenter implements RegisterContract.Presenter {
             return;
         }
         try {
-            user = new User(name, password);
+            String md5Password = new String(Hex.encodeHex(DigestUtils.md5(password)));
+            user = new User(name, md5Password);
         } catch (Exception e) {
             e.printStackTrace();
             mView.registerEmptyError();
             return;
         }
-        mRegisterTryUseCase.setUser(user);
-        Subscription subscription = mRegisterTryUseCase.execute()
+        mUserUseCase.setUser(user);
+        Subscription subscription = mUserUseCase.register()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Observer<User>() {
@@ -64,17 +66,16 @@ public class RegisterPresenter implements RegisterContract.Presenter {
 
                     @Override
                     public void onError(Throwable e) {
+                        e.printStackTrace();
                         mView.registerNetworkError();
                     }
 
                     @Override
                     public void onNext(User user) {
-                        switch (user.getId()) {
-                            case -1:
-                                mView.registerNetworkError();
-                                break;
-                            default:
-                                mView.registerSuccess(user.getId());
+                        if (user == null) {
+                            mView.registerNetworkError();
+                        } else {
+                            mView.registerSuccess(user.getId());
                         }
                     }
 

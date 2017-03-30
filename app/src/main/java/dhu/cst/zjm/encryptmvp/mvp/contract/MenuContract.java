@@ -1,6 +1,6 @@
 package dhu.cst.zjm.encryptmvp.mvp.contract;
 
-import dhu.cst.zjm.encryptmvp.mvp.model.ServerFile;
+import dhu.cst.zjm.encryptmvp.mvp.model.File;
 import dhu.cst.zjm.encryptmvp.mvp.presenter.BasePresenter;
 import dhu.cst.zjm.encryptmvp.mvp.view.BaseView;
 import dhu.cst.zjm.encryptmvp.util.ProgressListener;
@@ -11,7 +11,7 @@ import dhu.cst.zjm.encryptmvp.util.ProgressListener;
 
 public interface MenuContract {
     interface View extends BaseView {
-        void fileListClick(ServerFile serverFile);
+        void fileListClick(File file);
 
         void chooseFileError();
 
@@ -19,10 +19,12 @@ public interface MenuContract {
 
         void uploadSuccess();
 
+        void uploadFailed();
+
 
     }
 
     interface Presenter extends BasePresenter<View> {
-        void uploadFile(int id, String filePath,ProgressListener progressListener);
+        void uploadFile(int id, java.io.File file, ProgressListener progressListener);
     }
 }

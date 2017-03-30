@@ -39,7 +39,7 @@ public class FileTypeAdapter extends RecyclerSwipeAdapter<FileTypeAdapter.MyView
         this.downloadListener = listener;
     }
 
-    public void setRightClickListener(OnItemClickListener listener) {
+    public void setEncryptClickListener(OnItemClickListener listener) {
         this.encryptListener = listener;
     }
 

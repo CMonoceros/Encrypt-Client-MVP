@@ -3,16 +3,23 @@ package dhu.cst.zjm.encryptmvp.mvp.presenter;
 import android.util.Log;
 
 import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
-import dhu.cst.zjm.encryptmvp.domain.UploadFileUseCase;
+import dhu.cst.zjm.encryptmvp.domain.FileUseCase;
+import dhu.cst.zjm.encryptmvp.domain.ListFileUseCase;
 import dhu.cst.zjm.encryptmvp.mvp.contract.MenuContract;
-import dhu.cst.zjm.encryptmvp.mvp.view.BaseView;
+import dhu.cst.zjm.encryptmvp.util.FileUtil;
 import dhu.cst.zjm.encryptmvp.util.ProgressListener;
 import dhu.cst.zjm.encryptmvp.util.UploadFileRequestBody;
 import okhttp3.MediaType;
+import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
+import okio.BufferedSink;
+import rx.Observer;
 import rx.Subscriber;
 import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
@@ -24,12 +31,12 @@ import rx.subscriptions.CompositeSubscription;
  */
 
 public class MenuPresenter implements MenuContract.Presenter {
-    private UploadFileUseCase mUploadFileUseCase;
+    private FileUseCase mFileUseCase;
     private MenuContract.View mView;
     private CompositeSubscription mCompositeSubscription;
 
-    public MenuPresenter(UploadFileUseCase uploadFileUseCase) {
-        this.mUploadFileUseCase = uploadFileUseCase;
+    public MenuPresenter(FileUseCase fileUseCase) {
+        this.mFileUseCase = fileUseCase;
     }
 
     @Override
@@ -46,18 +53,19 @@ public class MenuPresenter implements MenuContract.Presenter {
     }
 
     @Override
-    public void uploadFile(int id, String filePath, ProgressListener progressListener) {
-        mUploadFileUseCase.setID(id + "");
-        File file = new File(filePath);
-        Map<String, UploadFileRequestBody> partMap = new HashMap<>();
+    public void uploadFile(int owner, File file, ProgressListener progressListener) {
         UploadFileRequestBody fileBody = new UploadFileRequestBody(file, progressListener);
-        partMap.put("file\"; filename=\"" + file.getName() + "\"", fileBody);
-        mUploadFileUseCase.setFileMap(partMap);
+        Map<String, RequestBody> map = new HashMap<>();
+        map.put("file\"; filename=\"" + file.getName(), fileBody);
+        map.put("owner", RequestBody.create(MediaType.parse("text/plain"), owner + ""));
+        map.put("fileName", RequestBody.create(MediaType.parse("text/plain"), file.getName()));
+        map.put("fileSize", RequestBody.create(MediaType.parse("text/plain"), FileUtil.getAutoFileOrFilesSize(file.getPath())));
+        mFileUseCase.setFileMap(map);
         //使用RxJava方式调度任务并监听
-        Subscription subscription = mUploadFileUseCase.execute()
+        Subscription subscription = mFileUseCase.uploadFile()
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeOn(Schedulers.io())
-                .subscribe(new Subscriber<String>() {
+                .subscribe(new Observer<dhu.cst.zjm.encryptmvp.mvp.model.File>() {
                     @Override
                     public void onCompleted() {
 
@@ -65,12 +73,17 @@ public class MenuPresenter implements MenuContract.Presenter {
 
                     @Override
                     public void onError(Throwable e) {
+                        e.printStackTrace();
                         mView.uploadNetworkError();
                     }
 
                     @Override
-                    public void onNext(String uploadFile) {
-                        mView.uploadSuccess();
+                    public void onNext(dhu.cst.zjm.encryptmvp.mvp.model.File file) {
+                        if (file == null) {
+                            mView.uploadFailed();
+                        } else {
+                            mView.uploadSuccess();
+                        }
                     }
                 });
         mCompositeSubscription.add(subscription);

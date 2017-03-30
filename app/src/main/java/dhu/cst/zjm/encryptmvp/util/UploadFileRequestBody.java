@@ -1,8 +1,11 @@
 package dhu.cst.zjm.encryptmvp.util;
 
 
+import android.util.Log;
+
 import java.io.File;
 import java.io.IOException;
+import java.util.Map;
 
 import okhttp3.MediaType;
 import okhttp3.RequestBody;
@@ -23,11 +26,12 @@ import rx.functions.Action1;
 public class UploadFileRequestBody extends RequestBody {
 
     private RequestBody mRequestBody;
+    private Map<String, String> params;
     private BufferedSource mBufferedSource;
     private final ProgressListener listener;
     private BufferedSink bufferedSink;
 
-    public UploadFileRequestBody(File file, ProgressListener listener) {
+    public UploadFileRequestBody(File file,ProgressListener listener) {
         this.mRequestBody = RequestBody.create(MediaType.parse("multipart/form-data"), file);
         this.listener = listener;
     }
@@ -37,17 +41,17 @@ public class UploadFileRequestBody extends RequestBody {
         this.listener = listener;
     }
 
-    //返回了requestBody的类型，想什么form-data/MP3/MP4/png等等等格式
+
     @Override
     public MediaType contentType() {
         return mRequestBody.contentType();
     }
 
-    //返回了本RequestBody的长度，也就是上传的totalLength
     @Override
     public long contentLength() throws IOException {
         return mRequestBody.contentLength();
     }
+
 
     @Override
     public void writeTo(BufferedSink sink) throws IOException {
@@ -75,7 +79,7 @@ public class UploadFileRequestBody extends RequestBody {
                 super.write(source, byteCount);
                 if (contentLength == 0) {
                     //获得contentLength的值，后续不再调用
-                    contentLength = contentLength();
+                    contentLength = mRequestBody.contentLength();
                 }
                 //增加当前写入的字节数
                 bytesWritten += byteCount;

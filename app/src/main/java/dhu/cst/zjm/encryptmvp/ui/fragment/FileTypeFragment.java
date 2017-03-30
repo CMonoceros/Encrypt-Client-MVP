@@ -1,15 +1,18 @@
 package dhu.cst.zjm.encryptmvp.ui.fragment;
 
+import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.CollapsingToolbarLayout;
+import android.support.design.widget.Snackbar;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -31,9 +34,11 @@ import dhu.cst.zjm.encryptmvp.injector.component.FileTypeFragmentComponent;
 import dhu.cst.zjm.encryptmvp.injector.module.ActivityModule;
 import dhu.cst.zjm.encryptmvp.injector.module.FileTypeModule;
 import dhu.cst.zjm.encryptmvp.mvp.contract.FileTypeContract;
+import dhu.cst.zjm.encryptmvp.mvp.model.EncryptRelation;
 import dhu.cst.zjm.encryptmvp.mvp.model.EncryptType;
-import dhu.cst.zjm.encryptmvp.mvp.model.ServerFile;
+import dhu.cst.zjm.encryptmvp.mvp.model.File;
 import dhu.cst.zjm.encryptmvp.ui.adapter.FileTypeAdapter;
+import dhu.cst.zjm.encryptmvp.util.ProgressListener;
 
 /**
  * Created by zjm on 2017/3/3.
@@ -44,16 +49,20 @@ public class FileTypeFragment extends BaseFragment implements FileTypeContract.V
     @Inject
     FileTypeContract.Presenter fileTypePresenter;
     private List<EncryptType> sourceEncryptTypeList;
-    private ServerFile serverFile;
+    private File file;
     private FileTypeAdapter fileTypeAdapter;
 
     @BindView(R.id.rcv_menu_file_type)
     public RecyclerView rcv_menu_file_type;
-    public android.support.v7.app.AlertDialog.Builder adb_others;
+    public android.support.v7.app.AlertDialog.Builder adb_menu_file_encrypt, adb_others;
 
     private CollapsingToolbarLayout ctl_menu;
     private ImageView iv_menu_toolbar;
     private TextView tv_menu_toolbar;
+    private ProgressDialog pd_file_progress;
+    private EditText et_menu_file_encrypt_exinf;
+    private View v_menu_file_encrypt;
+    private ViewGroup vg_menu_file_encrypt;
 
     @Override
     public void updateEncryptType(List<EncryptType> list) {
@@ -73,7 +82,7 @@ public class FileTypeFragment extends BaseFragment implements FileTypeContract.V
     @Override
     public void typeDetailClick(EncryptType encryptType) {
         adb_others.setTitle(encryptType.getName());
-        adb_others.setMessage(encryptType.getInf());
+        adb_others.setMessage(encryptType.getDescription());
         adb_others.setNegativeButton("关闭", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
@@ -83,9 +92,47 @@ public class FileTypeFragment extends BaseFragment implements FileTypeContract.V
         adb_others.show();
     }
 
+    public void setFile(File file) {
+        this.file = file;
+    }
+
     @Override
-    public void setServerFile(ServerFile serverFile) {
-        this.serverFile = serverFile;
+    public void downloadFileNetworkError() {
+        pd_file_progress.dismiss();
+        Toast.makeText(getActivity(), "Network Error.Please try again later!",
+                Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void setDesKey(final EncryptRelation encryptRelation) {
+        setupEncryptExinfDialog();
+        adb_menu_file_encrypt.setTitle("输入DES密钥！");
+        adb_menu_file_encrypt.setPositiveButton("确定", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                String i = et_menu_file_encrypt_exinf.getText().toString();
+                if (i.length() < 8) {
+                    Toast.makeText(getActivity(), "DES Key at least 8 bit!",
+                            Toast.LENGTH_SHORT).show();
+                } else {
+                    dialog.dismiss();
+                    fileTypePresenter.encryptBaseType(encryptRelation, i, "1");
+                }
+            }
+        });
+        adb_menu_file_encrypt.show();
+    }
+
+    @Override
+    public void encryptBaseTypeNetworkError() {
+        Toast.makeText(getActivity(), "Network Error.Please try again later!",
+                Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void encryptBaseTypeEncryptSuccess() {
+        Toast.makeText(getActivity(), "Encrypt File Success!",
+                Toast.LENGTH_SHORT).show();
     }
 
     @Override
@@ -122,19 +169,29 @@ public class FileTypeFragment extends BaseFragment implements FileTypeContract.V
         fileTypeAdapter.setDownloadClickListener(new FileTypeAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(int position) {
-
+                fileTypePresenter.downloadFile(file, new ProgressListener() {
+                    @Override
+                    public void onProgress(long progress, long total, boolean done) {
+                        pd_file_progress.setMax((int) total);
+                        pd_file_progress.setProgress((int) progress);
+                    }
+                });
+                pd_file_progress.show();
             }
         });
-        fileTypeAdapter.setRightClickListener(new FileTypeAdapter.OnItemClickListener() {
+        fileTypeAdapter.setEncryptClickListener(new FileTypeAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(int position) {
-
+                EncryptRelation encryptRelation = new EncryptRelation();
+                encryptRelation.setFileId(file.getId());
+                encryptRelation.setTypeId(sourceEncryptTypeList.get(position).getId());
+                fileTypePresenter.encryptFile(encryptRelation);
             }
         });
         fileTypeAdapter.setClickListener(new FileTypeAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(int position) {
-                //menu_file_type_interface.detailsClick(sourceEncryptTypeList.get(position));
+                typeDetailClick(sourceEncryptTypeList.get(position));
             }
         });
 
@@ -147,6 +204,20 @@ public class FileTypeFragment extends BaseFragment implements FileTypeContract.V
 
         rcv_menu_file_type.setLayoutManager(new StaggeredGridLayoutManager(1, StaggeredGridLayoutManager.VERTICAL));
         rcv_menu_file_type.setAdapter(fileTypeAdapter);
+
+        pd_file_progress = new ProgressDialog(this.getActivity());
+        pd_file_progress.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
+        pd_file_progress.setIndeterminate(false);
+        pd_file_progress.setProgress(0);
+        pd_file_progress.setButton(DialogInterface.BUTTON_POSITIVE, "确定", new DialogInterface.OnClickListener() {
+
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+            }
+        });
+        pd_file_progress.setCancelable(false);
+        pd_file_progress.setCanceledOnTouchOutside(false);
     }
 
     private void setupActivityView() {
@@ -155,10 +226,19 @@ public class FileTypeFragment extends BaseFragment implements FileTypeContract.V
 
         ctl_menu = (CollapsingToolbarLayout) getActivity().findViewById(R.id.ctl_menu);
         ctl_menu.setContentScrimColor(getResources().getColor(R.color.colorPrimary));
-        ctl_menu.setTitle(serverFile.getName());
+        ctl_menu.setTitle(file.getName());
 
         tv_menu_toolbar = (TextView) getActivity().findViewById(R.id.tv_menu_toolbar);
-        tv_menu_toolbar.setText(serverFile.getSize() + "\n \n" + serverFile.getUploadTime());
+        tv_menu_toolbar.setText(file.getSize() + "\n \n" + file.getUploadTime());
+    }
+
+    private void setupEncryptExinfDialog() {
+        LayoutInflater inflater = getActivity().getLayoutInflater();
+        vg_menu_file_encrypt = (ViewGroup) getActivity().findViewById(R.id.ll_menu_file_encrypt_exinf);
+        v_menu_file_encrypt = inflater.inflate(R.layout.ui_menu_file_encrypt_exinf, vg_menu_file_encrypt);
+        et_menu_file_encrypt_exinf = (EditText) v_menu_file_encrypt.findViewById(R.id.et_menu_file_encrypt_exinf);
+        adb_menu_file_encrypt = new android.support.v7.app.AlertDialog.Builder(getActivity());
+        adb_menu_file_encrypt.setView(v_menu_file_encrypt);
     }
 
     @Nullable

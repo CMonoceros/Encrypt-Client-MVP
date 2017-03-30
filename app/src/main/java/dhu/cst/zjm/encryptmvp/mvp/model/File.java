@@ -3,12 +3,13 @@ package dhu.cst.zjm.encryptmvp.mvp.model;
 import com.google.gson.annotations.Expose;
 
 import java.io.Serializable;
+import java.sql.Timestamp;
 
 /**
  * Created by zjm on 3/2/2017.
  */
 
-public class ServerFile implements Serializable{
+public class File implements Serializable{
     @Expose
     private int id;
     @Expose
@@ -26,7 +27,7 @@ public class ServerFile implements Serializable{
     @Expose
     private String path;
 
-    public ServerFile(int id, String name, int owner, String uploadTime, String size, String path) {
+    public File(int id, String name, int owner, String uploadTime, String size, String path) {
         this.id = id;
         this.name = name;
         this.owner = owner;

@@ -1,7 +1,10 @@
 package dhu.cst.zjm.encryptmvp.mvp.presenter;
 
 
-import dhu.cst.zjm.encryptmvp.domain.LoginInternetUseCase;
+import org.apache.commons.codec.binary.Hex;
+import org.apache.commons.codec.digest.DigestUtils;
+
+import dhu.cst.zjm.encryptmvp.domain.UserUseCase;
 import dhu.cst.zjm.encryptmvp.mvp.contract.LoginContract;
 import dhu.cst.zjm.encryptmvp.mvp.model.User;
 import rx.Observer;
@@ -15,12 +18,12 @@ import rx.subscriptions.CompositeSubscription;
  */
 
 public class LoginPresenter implements LoginContract.Presenter {
-    private LoginInternetUseCase mLoginInternetUseCase;
+    private UserUseCase mUserUseCase;
     private LoginContract.View mView;
     private CompositeSubscription mCompositeSubscription;
 
-    public LoginPresenter(LoginInternetUseCase loginInternetUseCase) {
-        this.mLoginInternetUseCase = loginInternetUseCase;
+    public LoginPresenter(UserUseCase userUseCase) {
+        this.mUserUseCase = userUseCase;
     }
 
     @Override
@@ -37,17 +40,18 @@ public class LoginPresenter implements LoginContract.Presenter {
     }
 
     @Override
-    public void loginInternet(String id, String password) {
+    public void login(String id, String password) {
         User user;
+        String md5Password = new String(Hex.encodeHex(DigestUtils.md5(password)));
         try {
-            user = new User(Integer.parseInt(id), password);
+            user = new User(Integer.parseInt(id), md5Password);
         } catch (Exception e) {
             e.printStackTrace();
             mView.loginEmptyError();
             return;
         }
-        mLoginInternetUseCase.setUser(user);
-        Subscription subscription = mLoginInternetUseCase.execute()
+        mUserUseCase.setUser(user);
+        Subscription subscription = mUserUseCase.login()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Observer<User>() {
@@ -58,6 +62,7 @@ public class LoginPresenter implements LoginContract.Presenter {
 
                     @Override
                     public void onError(Throwable e) {
+                        e.printStackTrace();
                         mView.loginNetworkError();
                     }
 

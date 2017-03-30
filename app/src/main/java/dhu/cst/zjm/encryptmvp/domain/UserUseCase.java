@@ -1,18 +1,19 @@
 package dhu.cst.zjm.encryptmvp.domain;
 
 import dhu.cst.zjm.encryptmvp.api.repository.BaseRepository;
+import dhu.cst.zjm.encryptmvp.domain.base.BaseUserUseCase;
 import dhu.cst.zjm.encryptmvp.mvp.model.User;
 import rx.Observable;
 /**
  * Created by zjm on 2017/2/24.
  */
 
-public class LoginInternetUseCase implements UseCase<User> {
+public class UserUseCase implements BaseUserUseCase<User> {
 
     private BaseRepository mRepository;
     private User mUser;
 
-    public LoginInternetUseCase(BaseRepository repository){
+    public UserUseCase(BaseRepository repository){
         this.mRepository=repository;
     }
 
@@ -21,7 +22,12 @@ public class LoginInternetUseCase implements UseCase<User> {
     }
 
     @Override
-    public Observable<User> execute() {
-        return mRepository.loginInternet(mUser);
+    public Observable<User> login() {
+        return mRepository.login(mUser);
+    }
+
+    @Override
+    public Observable<User> register() {
+        return mRepository.register(mUser);
     }
 }

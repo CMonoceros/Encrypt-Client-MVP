@@ -4,11 +4,14 @@ package dhu.cst.zjm.encryptmvp.api.repository;
 import java.util.List;
 import java.util.Map;
 
+import dhu.cst.zjm.encryptmvp.mvp.model.EncryptRelation;
 import dhu.cst.zjm.encryptmvp.mvp.model.EncryptType;
-import dhu.cst.zjm.encryptmvp.mvp.model.ServerFile;
+import dhu.cst.zjm.encryptmvp.mvp.model.File;
 import dhu.cst.zjm.encryptmvp.mvp.model.User;
-import dhu.cst.zjm.encryptmvp.util.UploadFileRequestBody;
+import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
+import okhttp3.ResponseBody;
+import retrofit2.http.Field;
 import rx.Observable;
 
 /**
@@ -16,13 +19,19 @@ import rx.Observable;
  */
 
 public interface BaseRepository {
-    Observable<User> loginInternet(User user);
+    Observable<User> login(User user);
 
-    Observable<User> registerTry(User user);
+    Observable<User> register(User user);
 
-    Observable<List<ServerFile>> getFileList(String id);
+    Observable<List<File>> getFileList(String id);
+
+    Observable<List<File>> getFileListByPaper(Map<String, String> params);
 
     Observable<List<EncryptType>> getEncryptType();
 
-    Observable<String> uploadFile(String id,Map<String, UploadFileRequestBody> fileMap);
+    Observable<EncryptRelation> encryptFile(Map<String, String> params);
+
+    Observable<File> uploadFile(Map<String,RequestBody> map);
+
+    Observable<ResponseBody> downloadFile(String downloadId);
 }

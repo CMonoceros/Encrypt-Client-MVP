@@ -3,7 +3,7 @@ package dhu.cst.zjm.encryptmvp.injector.module;
 import dagger.Module;
 import dagger.Provides;
 import dhu.cst.zjm.encryptmvp.api.repository.BaseRepository;
-import dhu.cst.zjm.encryptmvp.domain.GetFileListUseCase;
+import dhu.cst.zjm.encryptmvp.domain.ListFileUseCase;
 import dhu.cst.zjm.encryptmvp.mvp.contract.FileListContract;
 import dhu.cst.zjm.encryptmvp.mvp.presenter.FileListPresenter;
 
@@ -14,13 +14,13 @@ import dhu.cst.zjm.encryptmvp.mvp.presenter.FileListPresenter;
 @Module
 public class FileListModule {
     @Provides
-    public GetFileListUseCase provideGetFileListUseCase(BaseRepository baseRepository) {
-        return new GetFileListUseCase(baseRepository);
+    public ListFileUseCase provideListFileUseCase(BaseRepository baseRepository) {
+        return new ListFileUseCase(baseRepository);
 
     }
 
     @Provides
-    public FileListContract.Presenter provideFileListPresenter(GetFileListUseCase getFileListUseCase) {
-        return new FileListPresenter(getFileListUseCase);
+    public FileListContract.Presenter provideFileListPresenter(ListFileUseCase listFileUseCase) {
+        return new FileListPresenter(listFileUseCase);
     }
 }

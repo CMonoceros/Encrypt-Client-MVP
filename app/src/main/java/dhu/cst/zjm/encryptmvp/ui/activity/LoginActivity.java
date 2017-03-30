@@ -62,7 +62,7 @@ public class LoginActivity extends BaseActivity implements LoginContract.View {
 
     @OnClick(R.id.b_login_internet)
     public void loginInternet() {
-        loginContractPresenter.loginInternet(et_login_id.getText().toString() + "", et_login_password.getText().toString() + "");
+        loginContractPresenter.login(et_login_id.getText().toString() + "", et_login_password.getText().toString() + "");
     }
 
     @OnClick(R.id.b_register)
@@ -72,16 +72,10 @@ public class LoginActivity extends BaseActivity implements LoginContract.View {
 
     @Override
     public void getLoginState(User user) {
-        switch (user.getIsLogin()){
-            case 1:
-                IntentUtil.intentToMenuActivity(this,user);
-                break;
-            case 2:
-                loginExistError();
-                break;
-            case 3:
-                loginPasswordError();
-                break;
+        if (user != null) {
+            IntentUtil.intentToMenuActivity(this, user);
+        } else {
+            loginPasswordError();
         }
     }
 
@@ -93,13 +87,7 @@ public class LoginActivity extends BaseActivity implements LoginContract.View {
 
     @Override
     public void loginPasswordError() {
-        Toast.makeText(this, "Password Wrong.Please confirm your password!",
-                Toast.LENGTH_SHORT).show();
-    }
-
-    @Override
-    public void loginExistError() {
-        Toast.makeText(this, "User doesn't exist.Please confirm your id!",
+        Toast.makeText(this, "ID or Password Wrong.Please confirm!",
                 Toast.LENGTH_SHORT).show();
     }
 

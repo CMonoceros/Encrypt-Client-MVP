@@ -1,6 +1,8 @@
 package dhu.cst.zjm.encryptmvp.util;
 
 
+import android.util.Log;
+
 import java.io.IOException;
 
 import okhttp3.MediaType;
@@ -10,6 +12,9 @@ import okio.BufferedSource;
 import okio.ForwardingSource;
 import okio.Okio;
 import okio.Source;
+import rx.Observable;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.functions.Action1;
 
 /**
  * Created by zjm on 2017/1/10.
@@ -52,7 +57,13 @@ public class DownloadFileResponseBody extends ResponseBody {
             public long read(Buffer sink, long byteCount) throws IOException {
                 long bytesRead = super.read(sink, byteCount);
                 totalBytesRead += bytesRead != -1 ? bytesRead : 0;
-                listener.onProgress(totalBytesRead, responseBody.contentLength(), bytesRead == -1);
+                final boolean done = (bytesRead == -1);
+                Observable.just(totalBytesRead).observeOn(AndroidSchedulers.mainThread()).subscribe(new Action1<Long>() {
+                    @Override
+                    public void call(Long aLong) {
+                        listener.onProgress(totalBytesRead, responseBody.contentLength(), done);
+                    }
+                });
                 return bytesRead;
             }
         };

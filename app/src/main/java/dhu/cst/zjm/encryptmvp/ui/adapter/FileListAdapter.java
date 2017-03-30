@@ -12,18 +12,18 @@ import java.util.ArrayList;
 import java.util.List;
 
 import dhu.cst.zjm.encryptmvp.R;
-import dhu.cst.zjm.encryptmvp.mvp.model.ServerFile;
+import dhu.cst.zjm.encryptmvp.mvp.model.File;
 
 /**
  * Created by zjm on 3/2/2017.
  */
 
 public class FileListAdapter extends RecyclerView.Adapter<FileListAdapter.MyViewHolder> {
-    private List<ServerFile> list = new ArrayList<>();
+    private List<File> list = new ArrayList<>();
     private LayoutInflater mInflater;
     private OnItemClickListener listener;
 
-    public FileListAdapter(Context mContext, List<ServerFile> list) {
+    public FileListAdapter(Context mContext, List<File> list) {
         mInflater = LayoutInflater.from(mContext);
         this.list = list;
     }
@@ -42,10 +42,10 @@ public class FileListAdapter extends RecyclerView.Adapter<FileListAdapter.MyView
 
     @Override
     public void onBindViewHolder(MyViewHolder holder, final int position) {
-        ServerFile serverFile = list.get(position);
-        holder.tv_lv_menu_file_name.setText(serverFile.getName());
-        holder.tv_lv_menu_file_size.setText(serverFile.getSize());
-        holder.tv_lv_menu_file_upload_time.setText(serverFile.getUploadTime());
+        File file = list.get(position);
+        holder.tv_lv_menu_file_name.setText(file.getName());
+        holder.tv_lv_menu_file_size.setText(file.getSize());
+        holder.tv_lv_menu_file_upload_time.setText(file.getUploadTime().toString());
         holder.rl_lv_menu_file_item.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
