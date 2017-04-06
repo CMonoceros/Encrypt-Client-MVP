@@ -3,8 +3,10 @@ package dhu.cst.zjm.encryptmvp.mvp.presenter;
 import android.os.Environment;
 import android.util.Log;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -16,10 +18,17 @@ import dhu.cst.zjm.encryptmvp.domain.ResponseBodyUseCase;
 import dhu.cst.zjm.encryptmvp.mvp.contract.FileTypeContract;
 import dhu.cst.zjm.encryptmvp.mvp.model.EncryptRelation;
 import dhu.cst.zjm.encryptmvp.mvp.model.EncryptType;
-import dhu.cst.zjm.encryptmvp.util.DownloadFileResponseBody;
-import dhu.cst.zjm.encryptmvp.util.ProgressListener;
+import dhu.cst.zjm.encryptmvp.util.FileUtil;
+import dhu.cst.zjm.encryptmvp.util.ZipUtil;
+import dhu.cst.zjm.encryptmvp.util.algorithm.des.DesUtil;
+import dhu.cst.zjm.encryptmvp.util.algorithm.md5.Md5Util;
+import dhu.cst.zjm.encryptmvp.util.algorithm.rsa.RSASignature;
+import dhu.cst.zjm.encryptmvp.util.web.DownloadFileResponseBody;
+import dhu.cst.zjm.encryptmvp.util.web.ProgressListener;
 import okhttp3.ResponseBody;
+import rx.Observable;
 import rx.Observer;
+import rx.Subscriber;
 import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action1;
@@ -129,6 +138,7 @@ public class FileTypePresenter implements FileTypeContract.Presenter {
         Subscription subscription = mResponseBodyUseCase.downloadFile(file.getId() + "")
                 .subscribeOn(Schedulers.io())
                 .unsubscribeOn(Schedulers.io())
+                .observeOn(Schedulers.computation())
                 .map(new Func1<ResponseBody, DownloadFileResponseBody>() {
                     @Override
                     public DownloadFileResponseBody call(ResponseBody responseBody) {
@@ -157,12 +167,10 @@ public class FileTypePresenter implements FileTypeContract.Presenter {
 
                     @Override
                     public void onNext(InputStream inputStream) {
-                        String dir = downloadPath + file.getOwner() + "/Save/";
-                        File dirs = new File(dir);
+                        String dir = FileUtil.createDir(downloadPath + file.getOwner() + "/Save/");
                         File out = new File(dir + File.separator + realName + ".zip");
-                        if (!out.exists() || !dirs.exists()) {
+                        if (!out.exists()) {
                             try {
-                                dirs.mkdirs();
                                 out.createNewFile();
                             } catch (IOException e) {
                                 e.printStackTrace();
@@ -191,4 +199,76 @@ public class FileTypePresenter implements FileTypeContract.Presenter {
                 });
         mCompositeSubscription.add(subscription);
     }
+
+    @Override
+    public void decryptFile(EncryptRelation encryptRelation, dhu.cst.zjm.encryptmvp.mvp.model.File file) {
+        String[] s = file.getName().split("\\.");
+        String realName = s[0];
+        String downloadDir = FileUtil.createDir(downloadPath + file.getOwner() + "/Save/");
+        File out = new File(downloadDir + File.separator + realName + ".zip");
+        if (!out.exists()) {
+            mView.decryptFileExistError();
+            return;
+        }
+        switch (encryptRelation.getTypeId()) {
+            case 1:
+                mView.confirmDesKey(encryptRelation);
+                break;
+        }
+
+    }
+
+    @Override
+    public void decryptBaseType(final dhu.cst.zjm.encryptmvp.mvp.model.File file, final String desKey) {
+        final String[] s = file.getName().split("\\.");
+        final String realName = s[0];
+        final String downloadDir = FileUtil.createDir(downloadPath + file.getOwner() + "/Save/");
+        final String zipDir = FileUtil.createDir(downloadPath + file.getOwner() + "/Zip/");
+        final String decryptDir = FileUtil.createDir(downloadPath + file.getOwner() + "/Decrypt");
+        Subscription subscription = Observable.create(new Observable.OnSubscribe<Boolean>() {
+
+            @Override
+            public void call(Subscriber<? super Boolean> subscriber) {
+                try {
+                    String publicKey, sign, hashSign;
+                    ZipUtil.ZipDecrypt(downloadDir, realName + ".zip", zipDir);
+                    publicKey = FileUtil.File2String(new File(zipDir + "public.key"));
+                    sign = FileUtil.File2String(new File(zipDir + "sign.sign"));
+                    byte[] decrypt = DesUtil.decrypt(FileUtil.File2byte(zipDir + s[0] + ".encrypt"), desKey.getBytes());
+                    FileUtil.byte2File(decrypt, decryptDir, file.getName());
+                    hashSign = Md5Util.getMd5ByFile(new File(decryptDir, file.getName()));
+                    boolean result = RSASignature.doCheck(hashSign, sign, publicKey);
+                    subscriber.onNext(result);
+                } catch (Exception e) {
+                    subscriber.onError(e);
+                }
+            }
+        })
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Observer<Boolean>() {
+                    @Override
+                    public void onCompleted() {
+
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        e.printStackTrace();
+                        mView.decryptBaseTypeDecryptError();
+                    }
+
+                    @Override
+                    public void onNext(Boolean aBoolean) {
+                        if (aBoolean) {
+                            mView.decryptBaseTypeDecryptSuccess();
+                        } else {
+                            mView.decryptBaseTypeDecryptFailed();
+                        }
+                    }
+                });
+        mCompositeSubscription.add(subscription);
+    }
+
+
 }

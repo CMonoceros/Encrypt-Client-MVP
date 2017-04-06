@@ -1,7 +1,5 @@
-package dhu.cst.zjm.encryptmvp.util;
+package dhu.cst.zjm.encryptmvp.util.web;
 
-
-import android.util.Log;
 
 import java.io.IOException;
 

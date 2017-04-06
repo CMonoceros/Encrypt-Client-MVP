@@ -1,4 +1,4 @@
-package dhu.cst.zjm.encryptmvp.util;
+package dhu.cst.zjm.encryptmvp.util.web;
 
 import android.content.Context;
 import android.net.ConnectivityManager;

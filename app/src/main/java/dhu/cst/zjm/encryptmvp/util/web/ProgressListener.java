@@ -1,4 +1,4 @@
-package dhu.cst.zjm.encryptmvp.util;
+package dhu.cst.zjm.encryptmvp.util.web;
 
 /**
  * Created by zjm on 2017/1/10.

@@ -5,10 +5,8 @@ import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.CollapsingToolbarLayout;
-import android.support.design.widget.Snackbar;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -38,7 +36,7 @@ import dhu.cst.zjm.encryptmvp.mvp.model.EncryptRelation;
 import dhu.cst.zjm.encryptmvp.mvp.model.EncryptType;
 import dhu.cst.zjm.encryptmvp.mvp.model.File;
 import dhu.cst.zjm.encryptmvp.ui.adapter.FileTypeAdapter;
-import dhu.cst.zjm.encryptmvp.util.ProgressListener;
+import dhu.cst.zjm.encryptmvp.util.web.ProgressListener;
 
 /**
  * Created by zjm on 2017/3/3.
@@ -136,6 +134,50 @@ public class FileTypeFragment extends BaseFragment implements FileTypeContract.V
     }
 
     @Override
+    public void decryptFileExistError() {
+        Toast.makeText(getActivity(), "File doesn't exist!Please download first!",
+                Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void decryptBaseTypeDecryptSuccess() {
+        Toast.makeText(getActivity(), "Decrypt File Success!",
+                Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void decryptBaseTypeDecryptError() {
+        Toast.makeText(getActivity(), "Decrypt Error.Please try again later!",
+                Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void decryptBaseTypeDecryptFailed() {
+        Toast.makeText(getActivity(), "Decrypt Failed.Please confirm your key!",
+                Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void confirmDesKey(EncryptRelation encryptRelation) {
+        setupEncryptExinfDialog();
+        adb_menu_file_encrypt.setTitle("输入DES密钥！");
+        adb_menu_file_encrypt.setPositiveButton("确定", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                String i = et_menu_file_encrypt_exinf.getText().toString();
+                if (i.length() < 8) {
+                    Toast.makeText(getActivity(), "DES Key at least 8 bit!",
+                            Toast.LENGTH_SHORT).show();
+                } else {
+                    dialog.dismiss();
+                    fileTypePresenter.decryptBaseType(file,i);
+                }
+            }
+        });
+        adb_menu_file_encrypt.show();
+    }
+
+    @Override
     protected int getContentViewLayoutId() {
         return R.layout.ui_menu_file_type;
     }
@@ -198,7 +240,10 @@ public class FileTypeFragment extends BaseFragment implements FileTypeContract.V
         fileTypeAdapter.setDecryptClickListener(new FileTypeAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(int position) {
-
+                EncryptRelation encryptRelation = new EncryptRelation();
+                encryptRelation.setFileId(file.getId());
+                encryptRelation.setTypeId(sourceEncryptTypeList.get(position).getId());
+                fileTypePresenter.decryptFile(encryptRelation, file);
             }
         });
 

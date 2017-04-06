@@ -35,7 +35,7 @@ import dhu.cst.zjm.encryptmvp.mvp.model.User;
 import dhu.cst.zjm.encryptmvp.ui.fragment.FileListFragment;
 import dhu.cst.zjm.encryptmvp.ui.fragment.FileTypeFragment;
 import dhu.cst.zjm.encryptmvp.util.IntentUtil;
-import dhu.cst.zjm.encryptmvp.util.ProgressListener;
+import dhu.cst.zjm.encryptmvp.util.web.ProgressListener;
 
 import static dhu.cst.zjm.encryptmvp.util.FileUtil.getPath;
 

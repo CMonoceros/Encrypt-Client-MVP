@@ -11,11 +11,13 @@ import android.provider.MediaStore;
 import android.util.Log;
 
 import java.io.BufferedOutputStream;
+import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.FileReader;
 import java.io.IOException;
 import java.text.DecimalFormat;
 
@@ -324,11 +326,27 @@ public class FileUtil {
         return "com.google.android.apps.photos.content".equals(uri.getAuthority());
     }
 
+    public static String File2String(File file) {
+        BufferedReader br = null;
+        try {
+            br = new BufferedReader(new FileReader(file));
+            String readLine = null;
+            StringBuilder sb = new StringBuilder();
+            while ((readLine = br.readLine()) != null) {
+                sb.append(readLine);
+            }
+            br.close();
+            return sb.toString();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
     /**
      * 将文件转换为字节数组
      *
-     * @param filePath
-     *            文件路径
+     * @param filePath 文件路径
      * @return 字节数组
      */
     public static byte[] File2byte(String filePath) {
@@ -356,12 +374,9 @@ public class FileUtil {
     /**
      * 将字节数组保存至文件
      *
-     * @param buf
-     *            字节数组
-     * @param filePath
-     *            文件保存路径
-     * @param fileName
-     *            文件保存名称
+     * @param buf      字节数组
+     * @param filePath 文件保存路径
+     * @param fileName 文件保存名称
      */
     public static void byte2File(byte[] buf, String filePath, String fileName) {
         BufferedOutputStream bos = null;
@@ -369,10 +384,13 @@ public class FileUtil {
         File file = null;
         try {
             File dir = new File(filePath);
-            if (!dir.exists() && dir.isDirectory()) {
+            if (!dir.exists()) {
                 dir.mkdirs();
             }
             file = new File(filePath + File.separator + fileName);
+            if (!file.exists()) {
+                file.createNewFile();
+            }
             fos = new FileOutputStream(file);
             bos = new BufferedOutputStream(fos);
             bos.write(buf);
@@ -394,5 +412,14 @@ public class FileUtil {
                 }
             }
         }
+    }
+
+    public static String createDir(String path) {
+        File dirs = new File(path);
+        if (!dirs.exists()) {
+            dirs.mkdirs();
+
+        }
+        return path;
     }
 }

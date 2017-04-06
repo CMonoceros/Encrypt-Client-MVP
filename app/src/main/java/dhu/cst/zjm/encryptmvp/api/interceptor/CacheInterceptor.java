@@ -1,11 +1,9 @@
 package dhu.cst.zjm.encryptmvp.api.interceptor;
 
-import android.util.Log;
-
 import java.io.IOException;
 
 import dhu.cst.zjm.encryptmvp.MyApplication;
-import dhu.cst.zjm.encryptmvp.util.NetworkUtil;
+import dhu.cst.zjm.encryptmvp.util.web.NetworkUtil;
 import okhttp3.CacheControl;
 import okhttp3.Interceptor;
 import okhttp3.Request;

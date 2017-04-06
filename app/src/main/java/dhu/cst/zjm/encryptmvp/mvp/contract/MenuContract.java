@@ -3,7 +3,7 @@ package dhu.cst.zjm.encryptmvp.mvp.contract;
 import dhu.cst.zjm.encryptmvp.mvp.model.File;
 import dhu.cst.zjm.encryptmvp.mvp.presenter.BasePresenter;
 import dhu.cst.zjm.encryptmvp.mvp.view.BaseView;
-import dhu.cst.zjm.encryptmvp.util.ProgressListener;
+import dhu.cst.zjm.encryptmvp.util.web.ProgressListener;
 
 /**
  * Created by zjm on 3/3/2017.

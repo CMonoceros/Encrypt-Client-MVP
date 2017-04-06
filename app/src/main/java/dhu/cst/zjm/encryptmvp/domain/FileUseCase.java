@@ -1,14 +1,10 @@
 package dhu.cst.zjm.encryptmvp.domain;
 
-import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import dhu.cst.zjm.encryptmvp.api.repository.BaseRepository;
 import dhu.cst.zjm.encryptmvp.domain.base.BaseFileUseCase;
 import dhu.cst.zjm.encryptmvp.mvp.model.File;
-import dhu.cst.zjm.encryptmvp.util.UploadFileRequestBody;
-import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
 import rx.Observable;
 

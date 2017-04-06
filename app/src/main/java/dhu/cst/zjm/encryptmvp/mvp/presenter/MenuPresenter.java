@@ -1,26 +1,17 @@
 package dhu.cst.zjm.encryptmvp.mvp.presenter;
 
-import android.util.Log;
-
 import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import dhu.cst.zjm.encryptmvp.domain.FileUseCase;
-import dhu.cst.zjm.encryptmvp.domain.ListFileUseCase;
 import dhu.cst.zjm.encryptmvp.mvp.contract.MenuContract;
 import dhu.cst.zjm.encryptmvp.util.FileUtil;
-import dhu.cst.zjm.encryptmvp.util.ProgressListener;
-import dhu.cst.zjm.encryptmvp.util.UploadFileRequestBody;
+import dhu.cst.zjm.encryptmvp.util.web.ProgressListener;
+import dhu.cst.zjm.encryptmvp.util.web.UploadFileRequestBody;
 import okhttp3.MediaType;
-import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
-import okio.BufferedSink;
 import rx.Observer;
-import rx.Subscriber;
 import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;

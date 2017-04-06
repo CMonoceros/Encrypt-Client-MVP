@@ -72,5 +72,7 @@ dependencies {
 
     compile group: 'commons-codec', name: 'commons-codec', version: '1.10'
 
+    compile group: 'commons-collections', name: 'commons-collections', version: '3.2.1'
+
     testCompile 'junit:junit:4.12'
 }

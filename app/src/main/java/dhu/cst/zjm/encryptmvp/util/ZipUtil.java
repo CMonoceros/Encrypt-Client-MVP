@@ -83,7 +83,7 @@ public class ZipUtil {
 		while ((entry = zipInput.getNextEntry()) != null) {
 			System.out.println("解压缩" + entry.getName() + "文件");
 			String name=entry.getName();
-			if(entry.getName().startsWith("Encrypt\\")){
+			if(entry.getName().endsWith(".encrypt")||entry.getName().endsWith(".key")||entry.getName().endsWith(".sign")){
 				String s[]=entry.getName().split("\\\\");{
 					name=s[1];
 					System.out.println(name);
@@ -109,6 +109,8 @@ public class ZipUtil {
 			input.close();
 			output.close();
 		}
+		zipInput.close();
+		sendZipFile.close();
 		System.out.println("---------------解压成功------------------");
 		System.out.println(df.format(new Date()));
 		System.out.println();
