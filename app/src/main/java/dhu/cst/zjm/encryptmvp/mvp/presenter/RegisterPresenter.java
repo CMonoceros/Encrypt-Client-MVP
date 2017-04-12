@@ -1,12 +1,17 @@
 package dhu.cst.zjm.encryptmvp.mvp.presenter;
 
+import android.graphics.Bitmap;
+
 import org.apache.commons.codec.binary.Hex;
 import org.apache.commons.codec.digest.DigestUtils;
 
 import dhu.cst.zjm.encryptmvp.domain.UserUseCase;
 import dhu.cst.zjm.encryptmvp.mvp.contract.RegisterContract;
 import dhu.cst.zjm.encryptmvp.mvp.model.User;
+import dhu.cst.zjm.encryptmvp.util.VerificationUtil;
+import rx.Observable;
 import rx.Observer;
+import rx.Subscriber;
 import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
@@ -21,6 +26,7 @@ public class RegisterPresenter implements RegisterContract.Presenter {
     private UserUseCase mUserUseCase;
     private RegisterContract.View mView;
     private CompositeSubscription mCompositeSubscription;
+    private VerificationUtil mVerificationUtil;
 
     public RegisterPresenter(UserUseCase userUseCase) {
         this.mUserUseCase = userUseCase;
@@ -40,10 +46,14 @@ public class RegisterPresenter implements RegisterContract.Presenter {
     }
 
     @Override
-    public void registerTry(String name, String password, String confirmPassword) {
+    public void registerTry(String name, String password, String confirmPassword, String verification) {
         User user;
         if (!password.equals(confirmPassword)) {
             mView.confirmError();
+            return;
+        }
+        if(!verification.equals(mVerificationUtil.getCode())){
+            mView.registerVerificationError();
             return;
         }
         try {
@@ -81,5 +91,39 @@ public class RegisterPresenter implements RegisterContract.Presenter {
 
                 });
         mCompositeSubscription.add(subscription);
+    }
+
+    @Override
+    public void generateVerification() {
+        Subscription subscription = Observable.create(new Observable.OnSubscribe<Bitmap>() {
+
+            @Override
+            public void call(Subscriber<? super Bitmap> subscriber) {
+                mVerificationUtil = VerificationUtil.getInstance();
+                Bitmap bitmap = mVerificationUtil.createBitmap();
+                subscriber.onNext(bitmap);
+            }
+        })
+                .subscribeOn(Schedulers.computation())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Observer<Bitmap>() {
+                    @Override
+                    public void onCompleted() {
+
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+
+                    }
+
+                    @Override
+                    public void onNext(Bitmap bitmap) {
+                        mView.setVerificationBitmap(bitmap);
+                    }
+                });
+        mCompositeSubscription.add(subscription);
+
+
     }
 }

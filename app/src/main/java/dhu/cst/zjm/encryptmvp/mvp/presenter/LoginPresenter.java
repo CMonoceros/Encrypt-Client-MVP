@@ -1,6 +1,8 @@
 package dhu.cst.zjm.encryptmvp.mvp.presenter;
 
 
+import android.util.Log;
+
 import org.apache.commons.codec.binary.Hex;
 import org.apache.commons.codec.digest.DigestUtils;
 

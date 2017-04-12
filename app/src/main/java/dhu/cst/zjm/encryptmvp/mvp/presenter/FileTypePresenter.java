@@ -152,7 +152,7 @@ public class FileTypePresenter implements FileTypeContract.Presenter {
                         return responseBody.byteStream();
                     }
                 })
-                .observeOn(Schedulers.computation())
+                .observeOn(Schedulers.io())
                 .subscribe(new Observer<InputStream>() {
                     @Override
                     public void onCompleted() {

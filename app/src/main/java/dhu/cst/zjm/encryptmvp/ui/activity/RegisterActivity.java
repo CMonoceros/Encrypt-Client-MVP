@@ -2,10 +2,12 @@ package dhu.cst.zjm.encryptmvp.ui.activity;
 
 import android.app.Activity;
 import android.content.DialogInterface;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import javax.inject.Inject;
@@ -37,6 +39,16 @@ public class RegisterActivity extends BaseActivity implements RegisterContract.V
     EditText et_register_password;
     @BindView(R.id.et_register_confirmPassword)
     EditText et_register_confirmPassword;
+    @BindView(R.id.et_register_verification)
+    EditText et_register_verification;
+    @BindView(R.id.iv_register_verification)
+    ImageView iv_register_verification;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        registerContractPresenter.generateVerification();
+    }
 
     @Override
     protected int getContentViewLayoutId() {
@@ -63,13 +75,15 @@ public class RegisterActivity extends BaseActivity implements RegisterContract.V
 
     @OnClick(R.id.b_register_ok)
     public void registerTry() {
-        registerContractPresenter.registerTry(et_register_name.getText().toString() + "", et_register_password.getText().toString() + "", et_register_confirmPassword.getText().toString() + "");
+        registerContractPresenter.registerTry(et_register_name.getText().toString() + "", et_register_password.getText().toString() + "",
+                et_register_confirmPassword.getText().toString() + "", et_register_verification.getText().toString());
     }
 
     @Override
     public void confirmError() {
         Toast.makeText(this, "Confirm Error.Please confirm your password!",
                 Toast.LENGTH_SHORT).show();
+        registerContractPresenter.generateVerification();
     }
 
     @Override
@@ -91,11 +105,25 @@ public class RegisterActivity extends BaseActivity implements RegisterContract.V
     public void registerNetworkError() {
         Toast.makeText(this, "Network Error.Please try again later!",
                 Toast.LENGTH_SHORT).show();
+        registerContractPresenter.generateVerification();
     }
 
     @Override
     public void registerEmptyError() {
         Toast.makeText(this, "Name or Password can not be empty!",
                 Toast.LENGTH_SHORT).show();
+        registerContractPresenter.generateVerification();
+    }
+
+    @Override
+    public void registerVerificationError() {
+        Toast.makeText(this, "Verification Error.Please confirm again!",
+                Toast.LENGTH_SHORT).show();
+        registerContractPresenter.generateVerification();
+    }
+
+    @Override
+    public void setVerificationBitmap(Bitmap bitmap) {
+        iv_register_verification.setImageBitmap(bitmap);
     }
 }
