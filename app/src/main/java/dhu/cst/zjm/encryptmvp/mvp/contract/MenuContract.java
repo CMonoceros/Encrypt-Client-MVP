@@ -20,6 +20,8 @@ public interface MenuContract {
         void uploadSuccess();
 
         void uploadFailed();
+
+        void loadBackground();
     }
 
     interface Presenter extends BasePresenter<View> {

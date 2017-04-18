@@ -3,6 +3,7 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/Encrypt(MVP).iml" filepath="$PROJECT_DIR$/Encrypt(MVP).iml" />
+      <module fileurl="file://$PROJECT_DIR$/Encrypt-Client-MVP.iml" filepath="$PROJECT_DIR$/Encrypt-Client-MVP.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
     </modules>
   </component>

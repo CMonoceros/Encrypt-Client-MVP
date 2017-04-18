@@ -6,7 +6,11 @@ import android.app.FragmentTransaction;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.graphics.Point;
+import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.NavigationView;
@@ -14,6 +18,8 @@ import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
+import android.view.WindowManager;
+import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -58,6 +64,10 @@ public class MenuActivity extends BaseActivity implements MenuContract.View {
     NavigationView nv_menu_person;
     @BindView(R.id.ctl_menu)
     CollapsingToolbarLayout ctl_menu;
+    @BindView(R.id.rl_Menu_Main)
+    RelativeLayout rl_Menu_Main;
+    @BindView(R.id.iv_menu_toolbar)
+    ImageView iv_menu_toolbar;
     ProgressDialog pd_file_progress;
 
     @Override
@@ -86,7 +96,9 @@ public class MenuActivity extends BaseActivity implements MenuContract.View {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        dl_ui_menu.setBackgroundColor(Color.WHITE);
+        loadBackground();
+        nv_menu_person.setBackgroundColor(Color.WHITE);
+        rl_Menu_Main.setBackgroundColor(Color.WHITE);
         user = (User) getIntent().getSerializableExtra(IntentUtil.EXTRA_MENU_USER);
         setupView();
         setupFragment();
@@ -100,7 +112,6 @@ public class MenuActivity extends BaseActivity implements MenuContract.View {
         ctl_menu.setCollapsedTitleTextColor(Color.WHITE);//设置收缩后Toolbar上字体的颜色
 
         RelativeLayout nv_menu_header = (RelativeLayout) nv_menu_person.inflateHeaderView(R.layout.nv_menu_header);
-        nv_menu_person.removeHeaderView(nv_menu_person.getHeaderView(0));
         TextView tv_nv_menu_id = (TextView) nv_menu_header.findViewById(R.id.tv_nv_menu_id);
         TextView tv_nv_menu_name = (TextView) nv_menu_header.findViewById(R.id.tv_nv_menu_name);
         tv_nv_menu_id.setText(user.getId() + "");
@@ -193,9 +204,9 @@ public class MenuActivity extends BaseActivity implements MenuContract.View {
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == android.R.id.home) {
             dl_ui_menu.openDrawer(GravityCompat.START);
-            return true;
+            return super.onOptionsItemSelected(item);
         }
-        return true;
+        return super.onOptionsItemSelected(item);
     }
 
     @Override
@@ -238,5 +249,36 @@ public class MenuActivity extends BaseActivity implements MenuContract.View {
         pd_file_progress.dismiss();
         Toast.makeText(this, "Upload failed.Please try again later!",
                 Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void loadBackground() {
+        Point point = new Point();
+        WindowManager windowManager = getWindowManager();
+        windowManager.getDefaultDisplay().getSize(point);
+        int scrWidth = point.x;
+        int scrHeight = 256;
+
+        BitmapFactory.Options options = new BitmapFactory.Options();
+        options.inJustDecodeBounds = true;
+        BitmapFactory.decodeResource(getResources(), R.drawable.background_menu_toolbar, options);
+        int picWidth = options.outWidth;
+        int picHeight = options.outHeight;
+
+        int dx = picWidth / scrWidth;
+        int dy = picHeight / scrHeight;
+        int scale = 1;
+        if (dx >= dy && dy >= 1) {
+            scale = dx;
+        }
+        if (dy >= dx && dx >= 1) {
+            scale = dy;
+        }
+
+        options.inSampleSize = scale;
+        options.inJustDecodeBounds = false;
+        Bitmap bmp = BitmapFactory.decodeResource(getResources(), R.drawable.background_menu_toolbar, options);
+        BitmapDrawable bitmapDrawable = new BitmapDrawable(getResources(), bmp);
+        iv_menu_toolbar.setBackground(bitmapDrawable);
     }
 }

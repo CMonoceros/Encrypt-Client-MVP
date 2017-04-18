@@ -4,8 +4,8 @@
     <group>
         <item
             android:id="@+id/nV_Menu_Item_Home"
-            android:icon="@drawable/ic_home_black_48dp"
             android:checkable="true"
+            android:icon="@drawable/ic_home_black_48dp"
             android:title="Home" />
     </group>
 
@@ -13,12 +13,12 @@
         <menu>
             <item
                 android:checkable="true"
-                android:title="Information"
-                android:icon="@drawable/ic_information_black_48dp"/>
+                android:icon="@drawable/ic_information_black_48dp"
+                android:title="Information" />
             <item
-                android:title="Upload File"
+                android:id="@+id/nV_Menu_Item_Upload_File"
                 android:icon="@drawable/ic_file_upload_black_48dp"
-                android:id="@+id/nV_Menu_Item_Upload_File"/>
+                android:title="Upload File" />
         </menu>
     </item>
 
