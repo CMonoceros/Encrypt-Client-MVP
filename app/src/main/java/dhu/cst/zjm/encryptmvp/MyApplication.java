@@ -22,7 +22,7 @@ public class MyApplication extends Application {
 
     private static Context mContext;
     private ApplicationComponent mApplicationComponent;
-    private static RefWatcher mRefWatcher;
+    private RefWatcher mRefWatcher;
 
     @Override
     public void onCreate() {
@@ -79,5 +79,10 @@ public class MyApplication extends Application {
 
     public static Context getContext() {
         return mContext;
+    }
+
+    public static RefWatcher getmRefWatcher(Context context){
+        MyApplication myApplication=(MyApplication) context.getApplicationContext();
+        return myApplication.mRefWatcher;
     }
 }

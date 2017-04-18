@@ -60,17 +60,18 @@ public class FileTypeAdapter extends RecyclerSwipeAdapter<FileTypeAdapter.MyView
     }
 
     @Override
-    public void onBindViewHolder(final MyViewHolder holder, final int position) {
+    public void onBindViewHolder(MyViewHolder holder, int position) {
         setupMainView(holder, position);
         setupSwipeView(holder, position);
     }
 
-    private void setupMainView(final MyViewHolder holder, final int position) {
+    private void setupMainView(MyViewHolder holder, int position) {
         EncryptType encryptType = mData.get(position);
         holder.tv_rv_menu_file_type_name.setText(encryptType.getName());
     }
 
-    private void setupSwipeView(final MyViewHolder holder, final int position) {
+    private void setupSwipeView(MyViewHolder holder, int position) {
+        final int pos=position;
         //设置刷卡布局显示模式
         holder.sl_menu_file_type_item.setShowMode(SwipeLayout.ShowMode.PullOut);
 
@@ -78,7 +79,7 @@ public class FileTypeAdapter extends RecyclerSwipeAdapter<FileTypeAdapter.MyView
             @Override
             public void onClick(View v) {
                 if (downloadListener != null) {
-                    downloadListener.onItemClick(position);
+                    downloadListener.onItemClick(pos);
                 }
             }
         });
@@ -87,7 +88,7 @@ public class FileTypeAdapter extends RecyclerSwipeAdapter<FileTypeAdapter.MyView
             @Override
             public void onClick(View v) {
                 if (encryptListener != null) {
-                    encryptListener.onItemClick(position);
+                    encryptListener.onItemClick(pos);
                 }
             }
         });
@@ -95,7 +96,7 @@ public class FileTypeAdapter extends RecyclerSwipeAdapter<FileTypeAdapter.MyView
             @Override
             public void onClick(View v) {
                 if (detailListener != null) {
-                    detailListener.onItemClick(position);
+                    detailListener.onItemClick(pos);
                 }
             }
         });
@@ -104,7 +105,7 @@ public class FileTypeAdapter extends RecyclerSwipeAdapter<FileTypeAdapter.MyView
             @Override
             public void onClick(View v) {
                 if (decryptListener != null) {
-                    decryptListener.onItemClick(position);
+                    decryptListener.onItemClick(pos);
                 }
             }
         });

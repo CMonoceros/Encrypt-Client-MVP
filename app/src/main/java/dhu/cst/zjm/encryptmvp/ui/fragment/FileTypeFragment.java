@@ -65,8 +65,8 @@ public class FileTypeFragment extends BaseFragment implements FileTypeContract.V
     @Override
     public void updateEncryptType(List<EncryptType> list) {
         sourceEncryptTypeList.clear();
-        for (EncryptType e : list) {
-            sourceEncryptTypeList.add(e);
+        for (int i=0;i<list.size();i++) {
+            sourceEncryptTypeList.add(list.get(i));
         }
         fileTypeAdapter.notifyDataSetChanged();
     }
@@ -98,6 +98,13 @@ public class FileTypeFragment extends BaseFragment implements FileTypeContract.V
     public void downloadFileNetworkError() {
         pd_file_progress.dismiss();
         Toast.makeText(getActivity(), "Network Error.Please try again later!",
+                Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void downloadFileSuccess() {
+        pd_file_progress.dismiss();
+        Toast.makeText(getActivity(), "Download success!",
                 Toast.LENGTH_SHORT).show();
     }
 
@@ -236,7 +243,6 @@ public class FileTypeFragment extends BaseFragment implements FileTypeContract.V
                 typeDetailClick(sourceEncryptTypeList.get(position));
             }
         });
-
         fileTypeAdapter.setDecryptClickListener(new FileTypeAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(int position) {
@@ -267,10 +273,9 @@ public class FileTypeFragment extends BaseFragment implements FileTypeContract.V
 
     private void setupActivityView() {
         iv_menu_toolbar = (ImageView) getActivity().findViewById(R.id.iv_menu_toolbar);
-        iv_menu_toolbar.setVisibility(View.INVISIBLE);
+        iv_menu_toolbar.setVisibility(View.GONE);
 
         ctl_menu = (CollapsingToolbarLayout) getActivity().findViewById(R.id.ctl_menu);
-        ctl_menu.setContentScrimColor(getResources().getColor(R.color.colorPrimary));
         ctl_menu.setTitle(file.getName());
 
         tv_menu_toolbar = (TextView) getActivity().findViewById(R.id.tv_menu_toolbar);
@@ -279,7 +284,7 @@ public class FileTypeFragment extends BaseFragment implements FileTypeContract.V
 
     private void setupEncryptExinfDialog() {
         LayoutInflater inflater = getActivity().getLayoutInflater();
-        vg_menu_file_encrypt = (ViewGroup) getActivity().findViewById(R.id.ll_menu_file_encrypt_exinf);
+        vg_menu_file_encrypt = (ViewGroup) getActivity().findViewById(R.id.rl_menu_file_encrypt_exinf);
         v_menu_file_encrypt = inflater.inflate(R.layout.ui_menu_file_encrypt_exinf, vg_menu_file_encrypt);
         et_menu_file_encrypt_exinf = (EditText) v_menu_file_encrypt.findViewById(R.id.et_menu_file_encrypt_exinf);
         adb_menu_file_encrypt = new android.support.v7.app.AlertDialog.Builder(getActivity());
@@ -293,5 +298,11 @@ public class FileTypeFragment extends BaseFragment implements FileTypeContract.V
         setupView();
         setupActivityView();
         return view;
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        MyApplication.getmRefWatcher(getActivity()).watch(this);
     }
 }

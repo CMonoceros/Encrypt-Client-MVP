@@ -26,6 +26,8 @@ public interface RegisterContract {
 
         void loadBackground();
 
+        void passwordUnqualified();
+
         Resources getRes();
     }
 

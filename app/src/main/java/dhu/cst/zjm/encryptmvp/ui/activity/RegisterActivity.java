@@ -87,7 +87,7 @@ public class RegisterActivity extends BaseActivity implements RegisterContract.V
     @OnClick(R.id.b_register_ok)
     public void registerTry() {
         registerContractPresenter.registerTry(et_register_name.getText().toString() + "", et_register_password.getText().toString() + "",
-                et_register_confirmPassword.getText().toString() + "", et_register_verification.getText().toString());
+                et_register_confirmPassword.getText().toString() + "", et_register_verification.getText().toString()+"");
     }
 
     @Override
@@ -167,6 +167,13 @@ public class RegisterActivity extends BaseActivity implements RegisterContract.V
         Bitmap bmp = BitmapFactory.decodeResource(getResources(), R.drawable.background_register, options);
         BitmapDrawable bitmapDrawable = new BitmapDrawable(getResources(), bmp);
         rl_ui_register.setBackground(bitmapDrawable);
+    }
+
+    @Override
+    public void passwordUnqualified() {
+        Toast.makeText(this, "Password at least 8 and must be mixed letter and number!",
+                Toast.LENGTH_SHORT).show();
+        registerContractPresenter.generateVerification();
     }
 
     @Override

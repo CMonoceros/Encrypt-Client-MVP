@@ -25,6 +25,8 @@ public interface FileTypeContract {
 
         void downloadFileNetworkError();
 
+        void downloadFileSuccess();
+
         void setDesKey(EncryptRelation encryptRelation);
 
         void encryptBaseTypeNetworkError();

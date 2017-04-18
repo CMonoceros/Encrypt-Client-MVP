@@ -240,6 +240,7 @@ public class MenuActivity extends BaseActivity implements MenuContract.View {
 
     @Override
     public void uploadSuccess() {
+        pd_file_progress.dismiss();
         Toast.makeText(this, "Upload success!",
                 Toast.LENGTH_SHORT).show();
     }

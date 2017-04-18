@@ -10,6 +10,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.yalantis.phoenix.PullToRefreshView;
@@ -56,6 +57,7 @@ public class FileListFragment extends BaseFragment implements FileListContract.V
     private FileListAdapter fileListAdapter;
     private int fileListRows;
     private int fileListPaper;
+    private TextView tv_menu_toolbar;
 
     @Override
     public void setUser(User user) {
@@ -98,8 +100,10 @@ public class FileListFragment extends BaseFragment implements FileListContract.V
         iv_menu_toolbar.setVisibility(View.VISIBLE);
 
         ctl_menu = (CollapsingToolbarLayout) getActivity().findViewById(R.id.ctl_menu);
-        ctl_menu.setContentScrimColor(getResources().getColor(R.color.transparent));
         ctl_menu.setTitle(user.getName());
+
+        tv_menu_toolbar = (TextView) getActivity().findViewById(R.id.tv_menu_toolbar);
+        tv_menu_toolbar.setText("");
 
         rcv_menu_file_list.addOnScrollListener(new SwipyAppBarScrollListener(abl_ui_menu, ptrv_menu_file_list, rcv_menu_file_list));
     }
@@ -113,15 +117,15 @@ public class FileListFragment extends BaseFragment implements FileListContract.V
     @Override
     public void updateSourceList(List<File> list) {
         sourceFileList.clear();
-        for (File sf : list) {
-            sourceFileList.add(sf);
+        for (int i = 0; i < list.size(); i++) {
+            sourceFileList.add(list.get(i));
         }
         fileListAdapter.notifyDataSetChanged();
     }
 
     @Override
     public void fileListOnClick(File file) {
-        MenuActivity menuActivity=(MenuActivity)getActivity();
+        MenuActivity menuActivity = (MenuActivity) getActivity();
         menuActivity.fileListClick(file);
     }
 
@@ -158,5 +162,10 @@ public class FileListFragment extends BaseFragment implements FileListContract.V
 
     }
 
-
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        rcv_menu_file_list.clearOnScrollListeners();
+        MyApplication.getmRefWatcher(getActivity()).watch(this);
+    }
 }

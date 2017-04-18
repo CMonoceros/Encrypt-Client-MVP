@@ -132,48 +132,33 @@ public class FileTypePresenter implements FileTypeContract.Presenter {
     }
 
     @Override
-    public void downloadFile(final dhu.cst.zjm.encryptmvp.mvp.model.File file, final ProgressListener listener) {
+    public void downloadFile(dhu.cst.zjm.encryptmvp.mvp.model.File file, ProgressListener listener) {
+        final dhu.cst.zjm.encryptmvp.mvp.model.File f = file;
+        final ProgressListener pl = listener;
         String[] s = file.getName().split("\\.");
         final String realName = s[0];
         Subscription subscription = mResponseBodyUseCase.downloadFile(file.getId() + "")
                 .subscribeOn(Schedulers.io())
                 .unsubscribeOn(Schedulers.io())
                 .observeOn(Schedulers.computation())
-                .map(new Func1<ResponseBody, DownloadFileResponseBody>() {
+                .map(new Func1<ResponseBody, InputStream>() {
                     @Override
-                    public DownloadFileResponseBody call(ResponseBody responseBody) {
-                        return new DownloadFileResponseBody(responseBody, listener);
-                    }
-                })
-                .observeOn(Schedulers.computation())
-                .map(new Func1<DownloadFileResponseBody, InputStream>() {
-                    @Override
-                    public InputStream call(DownloadFileResponseBody responseBody) {
-                        return responseBody.byteStream();
+                    public InputStream call(ResponseBody responseBody) {
+                        return new DownloadFileResponseBody(responseBody, pl).byteStream();
                     }
                 })
                 .observeOn(Schedulers.io())
-                .subscribe(new Observer<InputStream>() {
+                .map(new Func1<InputStream, Boolean>() {
                     @Override
-                    public void onCompleted() {
-
-                    }
-
-                    @Override
-                    public void onError(Throwable e) {
-                        e.printStackTrace();
-                        mView.downloadFileNetworkError();
-                    }
-
-                    @Override
-                    public void onNext(InputStream inputStream) {
-                        String dir = FileUtil.createDir(downloadPath + file.getOwner() + "/Save/");
+                    public Boolean call(InputStream inputStream) {
+                        String dir = FileUtil.createDir(downloadPath + f.getOwner() + "/Save/");
                         File out = new File(dir + File.separator + realName + ".zip");
                         if (!out.exists()) {
                             try {
                                 out.createNewFile();
                             } catch (IOException e) {
                                 e.printStackTrace();
+                                return false;
                             }
                         }
                         try {
@@ -188,12 +173,35 @@ public class FileTypePresenter implements FileTypeContract.Presenter {
                                 }
                                 outputStream.write(fileReader, 0, read);
                                 fileSizeDownloaded += read;
-                                Log.i("Download Success ", "file download: " + fileSizeDownloaded);
                             }
                             outputStream.flush();
                             outputStream.close();
+                            return true;
                         } catch (IOException e) {
                             e.printStackTrace();
+                            return false;
+                        }
+                    }
+                })
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Observer<Boolean>() {
+                    @Override
+                    public void onCompleted() {
+
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        e.printStackTrace();
+                        mView.downloadFileNetworkError();
+                    }
+
+                    @Override
+                    public void onNext(Boolean state) {
+                        if(state){
+                            mView.downloadFileSuccess();
+                        }else{
+                            mView.downloadFileNetworkError();
                         }
                     }
                 });
@@ -219,7 +227,9 @@ public class FileTypePresenter implements FileTypeContract.Presenter {
     }
 
     @Override
-    public void decryptBaseType(final dhu.cst.zjm.encryptmvp.mvp.model.File file, final String desKey) {
+    public void decryptBaseType(dhu.cst.zjm.encryptmvp.mvp.model.File file, String desKey) {
+        final dhu.cst.zjm.encryptmvp.mvp.model.File f = file;
+        final String desK = desKey;
         final String[] s = file.getName().split("\\.");
         final String realName = s[0];
         final String downloadDir = FileUtil.createDir(downloadPath + file.getOwner() + "/Save/");
@@ -234,9 +244,9 @@ public class FileTypePresenter implements FileTypeContract.Presenter {
                     ZipUtil.ZipDecrypt(downloadDir, realName + ".zip", zipDir);
                     publicKey = FileUtil.File2String(new File(zipDir + "public.key"));
                     sign = FileUtil.File2String(new File(zipDir + "sign.sign"));
-                    byte[] decrypt = DesUtil.decrypt(FileUtil.File2byte(zipDir + s[0] + ".encrypt"), desKey.getBytes());
-                    FileUtil.byte2File(decrypt, decryptDir, file.getName());
-                    hashSign = Md5Util.getMd5ByFile(new File(decryptDir, file.getName()));
+                    byte[] decrypt = DesUtil.decrypt(FileUtil.File2byte(zipDir + s[0] + ".encrypt"), desK.getBytes());
+                    FileUtil.byte2File(decrypt, decryptDir, f.getName());
+                    hashSign = Md5Util.getMd5ByFile(new File(decryptDir, f.getName()));
                     boolean result = RSASignature.doCheck(hashSign, sign, publicKey);
                     subscriber.onNext(result);
                 } catch (Exception e) {

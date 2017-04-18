@@ -50,11 +50,19 @@ public class RegisterPresenter implements RegisterContract.Presenter {
     @Override
     public void registerTry(String name, String password, String confirmPassword, String verification) {
         User user;
+        if (password.length() < 8) {
+            mView.passwordUnqualified();
+            return;
+        }
+        if (password.matches("[a-zA-z]+") || password.matches("[0-9]*")) {
+            mView.passwordUnqualified();
+            return;
+        }
         if (!password.equals(confirmPassword)) {
             mView.confirmError();
             return;
         }
-        if (!verification.equals(mVerificationUtil.getCode())) {
+        if (!verification.toLowerCase().equals(mVerificationUtil.getCode().toLowerCase())) {
             mView.registerVerificationError();
             return;
         }
