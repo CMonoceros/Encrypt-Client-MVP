@@ -86,6 +86,7 @@ public class MenuActivity extends BaseActivity implements MenuContract.View {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        dl_ui_menu.setBackgroundColor(Color.WHITE);
         user = (User) getIntent().getSerializableExtra(IntentUtil.EXTRA_MENU_USER);
         setupView();
         setupFragment();

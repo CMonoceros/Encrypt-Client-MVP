@@ -17,6 +17,8 @@ public interface LoginContract {
         void loginPasswordError();
 
         void loginEmptyError();
+
+        void loadBackground();
     }
 
     interface Presenter extends BasePresenter<View> {

@@ -1,5 +1,6 @@
 package dhu.cst.zjm.encryptmvp.mvp.contract;
 
+import android.content.res.Resources;
 import android.graphics.Bitmap;
 
 import dhu.cst.zjm.encryptmvp.mvp.presenter.BasePresenter;
@@ -22,6 +23,10 @@ public interface RegisterContract {
         void registerVerificationError();
 
         void setVerificationBitmap(Bitmap bitmap);
+
+        void loadBackground();
+
+        Resources getRes();
     }
 
     interface Presenter extends BasePresenter<RegisterContract.View> {

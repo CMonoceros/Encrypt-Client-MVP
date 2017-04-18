@@ -1,22 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/ll_ui_register"
+    android:id="@+id/rl_ui_register"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/background_register"
-    android:orientation="vertical"
     android:theme="@android:style/Theme.Light.NoTitleBar.Fullscreen">
 
     <TextView
         android:id="@+id/tv_register_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:layout_marginTop="15dp"
+        android:layout_centerHorizontal="true"
+        android:paddingTop="15dip"
         android:text="Name"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true" />
+        android:textAppearance="?android:attr/textAppearanceLarge" />
 
 
     <EditText
@@ -24,27 +20,24 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/tv_register_name"
-        android:layout_gravity="center_horizontal"
-        android:layout_marginTop="20dp" />
+        android:layout_marginTop="20dip" />
 
     <TextView
         android:id="@+id/tv_register_password"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:layout_marginTop="22dp"
-        android:text="Password"
-        android:textAppearance="?android:attr/textAppearanceLarge"
         android:layout_below="@+id/et_register_name"
-        android:layout_centerHorizontal="true" />
+        android:layout_centerHorizontal="true"
+        android:paddingTop="20dip"
+        android:text="Password"
+        android:textAppearance="?android:attr/textAppearanceLarge" />
 
     <EditText
         android:id="@+id/et_register_password"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/tv_register_password"
-        android:layout_gravity="center_horizontal"
-        android:layout_marginTop="20dp"
+        android:layout_marginTop="20dip"
         android:ems="16"
         android:inputType="textPassword" />
 
@@ -52,48 +45,45 @@
         android:id="@+id/tv_register_confirmPassword"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:layout_marginTop="17dp"
-        android:text="Confirm password"
-        android:textAppearance="?android:attr/textAppearanceLarge"
         android:layout_below="@+id/et_register_password"
-        android:layout_centerHorizontal="true" />
+        android:layout_centerHorizontal="true"
+        android:paddingTop="15dip"
+        android:text="Confirm password"
+        android:textAppearance="?android:attr/textAppearanceLarge" />
 
     <EditText
         android:id="@+id/et_register_confirmPassword"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/tv_register_confirmPassword"
-        android:layout_gravity="center_horizontal"
-        android:layout_marginTop="20dp"
+        android:layout_marginTop="20dip"
         android:ems="16"
-        android:inputType="textPassword"
-        android:labelFor="@+id/et_register_confirmPassword" />
+        android:inputType="textPassword" />
 
     <ImageView
         android:id="@+id/iv_register_verification"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:src="@drawable/ac_register_wait"
         android:layout_below="@+id/et_register_confirmPassword"
-        android:layout_centerHorizontal="true" />
+        android:layout_centerHorizontal="true"
+        android:paddingTop="15dip" />
 
     <EditText
         android:id="@+id/et_register_verification"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:maxEms="6"
+        android:layout_below="@id/iv_register_verification"
         android:layout_centerHorizontal="true"
-        android:layout_below="@id/iv_register_verification" />
+        android:layout_marginTop="20dip"
+        android:maxEms="6" />
 
     <Button
         android:id="@+id/b_register_ok"
-        android:layout_width="158dp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:layout_marginTop="20dp"
-        android:text="Register"
         android:layout_below="@+id/et_register_verification"
-        android:layout_centerHorizontal="true" />
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="20dip"
+        android:text="Register" />
 
 </RelativeLayout>

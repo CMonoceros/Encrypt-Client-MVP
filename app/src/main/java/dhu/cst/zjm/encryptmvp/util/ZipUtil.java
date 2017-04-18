@@ -84,10 +84,9 @@ public class ZipUtil {
 			System.out.println("解压缩" + entry.getName() + "文件");
 			String name=entry.getName();
 			if(entry.getName().endsWith(".encrypt")||entry.getName().endsWith(".key")||entry.getName().endsWith(".sign")){
-				String s[]=entry.getName().split("\\\\");{
-					name=s[1];
-					System.out.println(name);
-				}
+				String s[]=entry.getName().split("/");
+				name=s[1];
+				System.out.println(name);
 			}
 			outFile = new File(outPath + File.separator + name);
 			System.out.println(outFile.getPath());

@@ -2,12 +2,20 @@ package dhu.cst.zjm.encryptmvp.ui.activity;
 
 import android.app.Activity;
 import android.content.DialogInterface;
+import android.content.res.Resources;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Point;
+import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
+import android.os.PersistableBundle;
+import android.support.annotation.Nullable;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
+import android.view.WindowManager;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import javax.inject.Inject;
@@ -43,10 +51,13 @@ public class RegisterActivity extends BaseActivity implements RegisterContract.V
     EditText et_register_verification;
     @BindView(R.id.iv_register_verification)
     ImageView iv_register_verification;
+    @BindView(R.id.rl_ui_register)
+    RelativeLayout rl_ui_register;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        loadBackground();
         registerContractPresenter.generateVerification();
     }
 
@@ -125,5 +136,41 @@ public class RegisterActivity extends BaseActivity implements RegisterContract.V
     @Override
     public void setVerificationBitmap(Bitmap bitmap) {
         iv_register_verification.setImageBitmap(bitmap);
+    }
+
+    @Override
+    public void loadBackground() {
+        Point point = new Point();
+        WindowManager windowManager = getWindowManager();
+        windowManager.getDefaultDisplay().getSize(point);
+        int scrWidth = point.x;
+        int scrHeight = point.y;
+
+        BitmapFactory.Options options = new BitmapFactory.Options();
+        options.inJustDecodeBounds = true;
+        BitmapFactory.decodeResource(getResources(), R.drawable.background_register, options);
+        int picWidth = options.outWidth;
+        int picHeight = options.outHeight;
+
+        int dx = picWidth / scrWidth;
+        int dy = picHeight / scrHeight;
+        int scale = 1;
+        if (dx >= dy && dy >= 1) {
+            scale = dx;
+        }
+        if (dy >= dx && dx >= 1) {
+            scale = dy;
+        }
+
+        options.inSampleSize = scale;
+        options.inJustDecodeBounds = false;
+        Bitmap bmp = BitmapFactory.decodeResource(getResources(), R.drawable.background_register, options);
+        BitmapDrawable bitmapDrawable = new BitmapDrawable(getResources(), bmp);
+        rl_ui_register.setBackground(bitmapDrawable);
+    }
+
+    @Override
+    public Resources getRes() {
+        return getResources();
     }
 }

@@ -1,78 +1,63 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/ll_ui_login"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/rl_ui_login"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:background="@drawable/background_login"
-    android:theme="@android:style/Theme.Light.NoTitleBar.Fullscreen"
-    android:weightSum="10">
+    android:theme="@android:style/Theme.Light.NoTitleBar.Fullscreen">
 
-    <LinearLayout
+    <TextView
+        android:id="@+id/tv_login_id"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:paddingTop="40dip"
+        android:text="Id"
+        android:textAppearance="?android:attr/textAppearanceLarge" />
+
+    <EditText
+        android:id="@+id/et_login_id"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_weight="2"
-        android:orientation="vertical"
-        android:weightSum="10">
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/tv_login_id"
+        android:layout_marginTop="20dip"
+        android:inputType="number" />
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:layout_marginTop="40dp"
-            android:text="Id"
-            android:textAppearance="?android:attr/textAppearanceLarge" />
+    <TextView
+        android:id="@+id/tv_login_password"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/et_login_id"
+        android:layout_centerHorizontal="true"
+        android:paddingTop="30dip"
+        android:text="Password"
+        android:textAppearance="?android:attr/textAppearanceLarge" />
 
-        <EditText
-            android:id="@+id/et_login_id"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:layout_marginTop="20dp"
-            android:inputType="number" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:layout_marginTop="30dp"
-            android:text="Password"
-            android:textAppearance="?android:attr/textAppearanceLarge" />
-
-        <EditText
-            android:labelFor="@+id/et_login_password"
-            android:id="@+id/et_login_password"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:layout_marginTop="20dp"
-            android:ems="16"
-            android:inputType="textPassword" />
-
-        <Button
-            android:id="@+id/b_login_internet"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:layout_marginTop="50dp"
-            android:text="Internet Login" />
-
-    </LinearLayout>
-
-    <LinearLayout
+    <EditText
+        android:id="@+id/et_login_password"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_weight="8"
-        android:orientation="vertical">
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/tv_login_password"
+        android:layout_marginTop="20dip"
+        android:ems="16"
+        android:inputType="textPassword" />
 
-        <Button
-            android:id="@+id/b_register"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_marginTop="30dp"
-            android:text="Register" />
-    </LinearLayout>
+    <Button
+        android:id="@+id/b_login_internet"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/et_login_password"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="50dip"
+        android:text="Internet Login" />
+
+    <Button
+        android:id="@+id/b_register"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/b_login_internet"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="50dip"
+        android:text="Register" />
 
 
-</LinearLayout>
+</RelativeLayout>

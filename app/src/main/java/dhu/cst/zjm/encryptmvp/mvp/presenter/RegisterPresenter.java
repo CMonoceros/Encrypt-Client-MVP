@@ -1,10 +1,12 @@
 package dhu.cst.zjm.encryptmvp.mvp.presenter;
 
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 
 import org.apache.commons.codec.binary.Hex;
 import org.apache.commons.codec.digest.DigestUtils;
 
+import dhu.cst.zjm.encryptmvp.R;
 import dhu.cst.zjm.encryptmvp.domain.UserUseCase;
 import dhu.cst.zjm.encryptmvp.mvp.contract.RegisterContract;
 import dhu.cst.zjm.encryptmvp.mvp.model.User;
@@ -52,7 +54,7 @@ public class RegisterPresenter implements RegisterContract.Presenter {
             mView.confirmError();
             return;
         }
-        if(!verification.equals(mVerificationUtil.getCode())){
+        if (!verification.equals(mVerificationUtil.getCode())) {
             mView.registerVerificationError();
             return;
         }
@@ -99,9 +101,14 @@ public class RegisterPresenter implements RegisterContract.Presenter {
 
             @Override
             public void call(Subscriber<? super Bitmap> subscriber) {
+                BitmapFactory.Options options = new BitmapFactory.Options();
+                int scale = 2;
+                options.inSampleSize = scale;
+                Bitmap bmp = BitmapFactory.decodeResource(mView.getRes(), R.drawable.ic_loading, options);
+                subscriber.onNext(bmp);
                 mVerificationUtil = VerificationUtil.getInstance();
-                Bitmap bitmap = mVerificationUtil.createBitmap();
-                subscriber.onNext(bitmap);
+                bmp = mVerificationUtil.createBitmap();
+                subscriber.onNext(bmp);
             }
         })
                 .subscribeOn(Schedulers.computation())
