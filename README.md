@@ -42,5 +42,9 @@ Server为J2EE服务器。<br />
 ![image](https://github.com/CMonoceros/Encrypt-Client-MVP/raw/master/screenshot/client_mvp.jpg)
 
 
+其它
+------
+其他内容，包括相关方法接口，见doc文件夹下开发报告
+
 
 
