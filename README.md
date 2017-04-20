@@ -14,7 +14,7 @@
 概念模型
 ------
 
-![](Encrypt-Client-MVP/screenshot/usecase.jpg)
+![image](https://github.com/CMonoceros/Encrypt-Client-MVP/screenshot/usecase.jpg)
 
 系统设计
 ------
@@ -39,7 +39,7 @@ Model中包含通过Expose注解过滤相关属性，对应所属模块的序列
 WebApi中包含ApiService，Retrofit2注解定义的网络接口。Interceptor，Cache，Cookie，HttpLog相关拦截器。<br />
 Server为J2EE服务器。<br />
 
-![](Encrypt-Client-MVP/screenshot/client_mvp.jpg)
+![image](https://github.com/CMonoceros/Encrypt-Client-MVP/screenshot/client_mvp.jpg)
 
 
 
