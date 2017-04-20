@@ -4,7 +4,7 @@ import dagger.Component;
 import dhu.cst.zjm.encryptmvp.injector.module.ActivityModule;
 import dhu.cst.zjm.encryptmvp.injector.module.RegisterModule;
 import dhu.cst.zjm.encryptmvp.injector.scope.PerActivity;
-import dhu.cst.zjm.encryptmvp.ui.activity.RegisterActivity;
+import dhu.cst.zjm.encryptmvp.mvp.view.ui.activity.RegisterActivity;
 
 /**
  * Created by zjm on 2017/3/1.

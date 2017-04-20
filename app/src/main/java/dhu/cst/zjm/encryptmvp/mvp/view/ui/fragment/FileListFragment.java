@@ -1,4 +1,4 @@
-package dhu.cst.zjm.encryptmvp.ui.fragment;
+package dhu.cst.zjm.encryptmvp.mvp.view.ui.fragment;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -32,8 +32,8 @@ import dhu.cst.zjm.encryptmvp.injector.module.FileListModule;
 import dhu.cst.zjm.encryptmvp.mvp.contract.FileListContract;
 import dhu.cst.zjm.encryptmvp.mvp.model.File;
 import dhu.cst.zjm.encryptmvp.mvp.model.User;
-import dhu.cst.zjm.encryptmvp.ui.activity.MenuActivity;
-import dhu.cst.zjm.encryptmvp.ui.adapter.FileListAdapter;
+import dhu.cst.zjm.encryptmvp.mvp.view.ui.activity.MenuActivity;
+import dhu.cst.zjm.encryptmvp.mvp.view.ui.adapter.FileListAdapter;
 import dhu.cst.zjm.encryptmvp.util.appbarlayout.SwipyAppBarScrollListener;
 
 /**

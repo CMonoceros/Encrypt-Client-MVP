@@ -1,4 +1,4 @@
-package dhu.cst.zjm.encryptmvp.ui.fragment;
+package dhu.cst.zjm.encryptmvp.mvp.view.ui.fragment;
 
 import android.app.Fragment;
 import android.os.Bundle;

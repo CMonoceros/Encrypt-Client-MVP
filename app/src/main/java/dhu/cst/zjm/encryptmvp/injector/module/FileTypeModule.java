@@ -22,17 +22,12 @@ public class FileTypeModule {
     }
 
     @Provides
-    public ResponseBodyUseCase provideResponseBodyUseCase(BaseRepository baseRepository){
-        return new ResponseBodyUseCase(baseRepository);
-    }
-
-    @Provides
-    public EncryptRelationUseCase provideEncryptRelationUseCase(BaseRepository baseRepository){
+    public EncryptRelationUseCase provideEncryptRelationUseCase(BaseRepository baseRepository) {
         return new EncryptRelationUseCase(baseRepository);
     }
 
     @Provides
-    public FileTypeContract.Presenter provideFileTypePresenter(ListEncryptTypeUseCase listEncryptTypeUseCase,ResponseBodyUseCase responseBodyUseCase,EncryptRelationUseCase encryptRelationUseCase) {
-        return new FileTypePresenter(listEncryptTypeUseCase,responseBodyUseCase,encryptRelationUseCase);
+    public FileTypeContract.Presenter provideFileTypePresenter(ListEncryptTypeUseCase listEncryptTypeUseCase, EncryptRelationUseCase encryptRelationUseCase) {
+        return new FileTypePresenter(listEncryptTypeUseCase, encryptRelationUseCase);
     }
 }

@@ -55,6 +55,28 @@ public class FileUtil {
     }
 
     /**
+     * 获取文件指定文件的指定单位的大小
+     *
+     * @param file 文件
+     * @param sizeType 获取大小的类型1为B、2为KB、3为MB、4为GB
+     * @return double值的大小
+     */
+    public static double getFileOrFilesSize(File file, int sizeType) {
+        long blockSize = 0;
+        try {
+            if (file.isDirectory()) {
+                blockSize = getFileSizes(file);
+            } else {
+                blockSize = getFileSize(file);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            Log.e("获取文件大小", "获取失败!");
+        }
+        return FormetFileSize(blockSize, sizeType);
+    }
+
+    /**
      * 调用此方法自动计算指定文件或指定文件夹的大小
      *
      * @param filePath 文件路径

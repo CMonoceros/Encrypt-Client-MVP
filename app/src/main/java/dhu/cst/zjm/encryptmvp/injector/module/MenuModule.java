@@ -4,6 +4,7 @@ import dagger.Module;
 import dagger.Provides;
 import dhu.cst.zjm.encryptmvp.api.repository.BaseRepository;
 import dhu.cst.zjm.encryptmvp.domain.FileUseCase;
+import dhu.cst.zjm.encryptmvp.domain.ResponseBodyUseCase;
 import dhu.cst.zjm.encryptmvp.mvp.contract.MenuContract;
 import dhu.cst.zjm.encryptmvp.mvp.presenter.MenuPresenter;
 
@@ -19,7 +20,12 @@ public class MenuModule {
     }
 
     @Provides
-    public MenuContract.Presenter provideMenuPresenter(FileUseCase fileUseCase) {
-        return new MenuPresenter(fileUseCase);
+    public ResponseBodyUseCase provideResponseBodyUseCase(BaseRepository baseRepository) {
+        return new ResponseBodyUseCase(baseRepository);
+    }
+
+    @Provides
+    public MenuContract.Presenter provideMenuPresenter(FileUseCase fileUseCase,ResponseBodyUseCase responseBodyUseCase) {
+        return new MenuPresenter(fileUseCase,responseBodyUseCase);
     }
 }

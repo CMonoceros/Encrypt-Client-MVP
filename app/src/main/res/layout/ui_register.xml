@@ -66,6 +66,7 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/et_register_confirmPassword"
         android:layout_centerHorizontal="true"
+        android:clickable="true"
         android:paddingTop="15dip" />
 
     <EditText

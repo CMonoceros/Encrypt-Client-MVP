@@ -1,6 +1,5 @@
-package dhu.cst.zjm.encryptmvp.ui.fragment;
+package dhu.cst.zjm.encryptmvp.mvp.view.ui.fragment;
 
-import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -35,8 +34,8 @@ import dhu.cst.zjm.encryptmvp.mvp.contract.FileTypeContract;
 import dhu.cst.zjm.encryptmvp.mvp.model.EncryptRelation;
 import dhu.cst.zjm.encryptmvp.mvp.model.EncryptType;
 import dhu.cst.zjm.encryptmvp.mvp.model.File;
-import dhu.cst.zjm.encryptmvp.ui.adapter.FileTypeAdapter;
-import dhu.cst.zjm.encryptmvp.util.web.ProgressListener;
+import dhu.cst.zjm.encryptmvp.mvp.view.ui.activity.MenuActivity;
+import dhu.cst.zjm.encryptmvp.mvp.view.ui.adapter.FileTypeAdapter;
 
 /**
  * Created by zjm on 2017/3/3.
@@ -57,7 +56,6 @@ public class FileTypeFragment extends BaseFragment implements FileTypeContract.V
     private CollapsingToolbarLayout ctl_menu;
     private ImageView iv_menu_toolbar;
     private TextView tv_menu_toolbar;
-    private ProgressDialog pd_file_progress;
     private EditText et_menu_file_encrypt_exinf;
     private View v_menu_file_encrypt;
     private ViewGroup vg_menu_file_encrypt;
@@ -94,19 +92,6 @@ public class FileTypeFragment extends BaseFragment implements FileTypeContract.V
         this.file = file;
     }
 
-    @Override
-    public void downloadFileNetworkError() {
-        pd_file_progress.dismiss();
-        Toast.makeText(getActivity(), "Network Error.Please try again later!",
-                Toast.LENGTH_SHORT).show();
-    }
-
-    @Override
-    public void downloadFileSuccess() {
-        pd_file_progress.dismiss();
-        Toast.makeText(getActivity(), "Download success!",
-                Toast.LENGTH_SHORT).show();
-    }
 
     @Override
     public void setDesKey(final EncryptRelation encryptRelation) {
@@ -218,14 +203,8 @@ public class FileTypeFragment extends BaseFragment implements FileTypeContract.V
         fileTypeAdapter.setDownloadClickListener(new FileTypeAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(int position) {
-                fileTypePresenter.downloadFile(file, new ProgressListener() {
-                    @Override
-                    public void onProgress(long progress, long total, boolean done) {
-                        pd_file_progress.setMax((int) total);
-                        pd_file_progress.setProgress((int) progress);
-                    }
-                });
-                pd_file_progress.show();
+                MenuActivity menuActivity=(MenuActivity)getActivity();
+                menuActivity.downloadFileStartService(file);
             }
         });
         fileTypeAdapter.setEncryptClickListener(new FileTypeAdapter.OnItemClickListener() {
@@ -255,20 +234,6 @@ public class FileTypeFragment extends BaseFragment implements FileTypeContract.V
 
         rcv_menu_file_type.setLayoutManager(new StaggeredGridLayoutManager(1, StaggeredGridLayoutManager.VERTICAL));
         rcv_menu_file_type.setAdapter(fileTypeAdapter);
-
-        pd_file_progress = new ProgressDialog(this.getActivity());
-        pd_file_progress.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
-        pd_file_progress.setIndeterminate(false);
-        pd_file_progress.setProgress(0);
-        pd_file_progress.setButton(DialogInterface.BUTTON_POSITIVE, "确定", new DialogInterface.OnClickListener() {
-
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.dismiss();
-            }
-        });
-        pd_file_progress.setCancelable(false);
-        pd_file_progress.setCanceledOnTouchOutside(false);
     }
 
     private void setupActivityView() {

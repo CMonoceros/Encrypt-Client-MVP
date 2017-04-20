@@ -3,11 +3,10 @@ package dhu.cst.zjm.encryptmvp.util;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 
 import dhu.cst.zjm.encryptmvp.mvp.model.User;
-import dhu.cst.zjm.encryptmvp.ui.activity.MenuActivity;
-import dhu.cst.zjm.encryptmvp.ui.activity.RegisterActivity;
+import dhu.cst.zjm.encryptmvp.mvp.view.ui.activity.MenuActivity;
+import dhu.cst.zjm.encryptmvp.mvp.view.ui.activity.RegisterActivity;
 
 /**
  * Created by zjm on 3/2/2017.

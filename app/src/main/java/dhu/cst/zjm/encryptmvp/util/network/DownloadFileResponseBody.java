@@ -1,4 +1,4 @@
-package dhu.cst.zjm.encryptmvp.util.web;
+package dhu.cst.zjm.encryptmvp.util.network;
 
 
 import java.io.IOException;
@@ -13,6 +13,7 @@ import okio.Source;
 import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action1;
+import rx.schedulers.Schedulers;
 
 /**
  * Created by zjm on 2017/1/10.
@@ -23,6 +24,7 @@ public class DownloadFileResponseBody extends ResponseBody {
     private final ResponseBody responseBody;
     private final ProgressListener listener;
     private BufferedSource bufferedSource;
+    private boolean isPublishProgress = true;
 
     public DownloadFileResponseBody(ResponseBody responseBody, ProgressListener listener) {
         this.responseBody = responseBody;
@@ -56,12 +58,22 @@ public class DownloadFileResponseBody extends ResponseBody {
                 long bytesRead = super.read(sink, byteCount);
                 totalBytesRead += bytesRead != -1 ? bytesRead : 0;
                 final boolean done = (bytesRead == -1);
-                Observable.just(totalBytesRead).observeOn(AndroidSchedulers.mainThread()).subscribe(new Action1<Long>() {
-                    @Override
-                    public void call(Long aLong) {
-                        listener.onProgress(totalBytesRead, responseBody.contentLength(), done);
-                    }
-                });
+                if (isPublishProgress) {
+                    isPublishProgress = false;
+                    //回调上传接口
+                    Observable.just(totalBytesRead).observeOn(Schedulers.io()).subscribe(new Action1<Long>() {
+                        @Override
+                        public void call(Long aLong) {
+                            listener.onProgress(totalBytesRead, responseBody.contentLength(), done);
+                            try {
+                                Thread.sleep(500);
+                            } catch (InterruptedException e) {
+                                e.printStackTrace();
+                            }
+                            isPublishProgress = true;
+                        }
+                    });
+                }
                 return bytesRead;
             }
         };

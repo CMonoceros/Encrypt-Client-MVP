@@ -1,4 +1,4 @@
-package dhu.cst.zjm.encryptmvp.ui.activity;
+package dhu.cst.zjm.encryptmvp.mvp.view.ui.activity;
 
 import android.Manifest;
 import android.content.DialogInterface;
@@ -12,12 +12,8 @@ import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
-import android.util.Log;
 import android.view.WindowManager;
-import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
@@ -27,7 +23,6 @@ import java.util.List;
 import javax.inject.Inject;
 
 import butterknife.BindView;
-import butterknife.BindViews;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import dhu.cst.zjm.encryptmvp.MyApplication;

@@ -1,12 +1,9 @@
 package dhu.cst.zjm.encryptmvp.mvp.presenter;
 
 import android.os.Environment;
-import android.util.Log;
 
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -23,15 +20,14 @@ import dhu.cst.zjm.encryptmvp.util.ZipUtil;
 import dhu.cst.zjm.encryptmvp.util.algorithm.des.DesUtil;
 import dhu.cst.zjm.encryptmvp.util.algorithm.md5.Md5Util;
 import dhu.cst.zjm.encryptmvp.util.algorithm.rsa.RSASignature;
-import dhu.cst.zjm.encryptmvp.util.web.DownloadFileResponseBody;
-import dhu.cst.zjm.encryptmvp.util.web.ProgressListener;
+import dhu.cst.zjm.encryptmvp.util.network.DownloadFileResponseBody;
+import dhu.cst.zjm.encryptmvp.util.network.ProgressListener;
 import okhttp3.ResponseBody;
 import rx.Observable;
 import rx.Observer;
 import rx.Subscriber;
 import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
-import rx.functions.Action1;
 import rx.functions.Func1;
 import rx.schedulers.Schedulers;
 import rx.subscriptions.CompositeSubscription;
@@ -44,14 +40,12 @@ public class FileTypePresenter implements FileTypeContract.Presenter {
 
     private FileTypeContract.View mView;
     private ListEncryptTypeUseCase mListEncryptTypeUseCase;
-    private ResponseBodyUseCase mResponseBodyUseCase;
     private EncryptRelationUseCase mEncryptRelationUseCase;
     private CompositeSubscription mCompositeSubscription;
-    private String downloadPath = Environment.getExternalStorageDirectory().getAbsolutePath() + "/Encrypt/";
+    public static final String downloadPath = Environment.getExternalStorageDirectory().getAbsolutePath() + "/Encrypt/";
 
-    public FileTypePresenter(ListEncryptTypeUseCase listEncryptTypeUseCase, ResponseBodyUseCase responseBodyUseCase, EncryptRelationUseCase encryptRelationUseCase) {
+    public FileTypePresenter(ListEncryptTypeUseCase listEncryptTypeUseCase, EncryptRelationUseCase encryptRelationUseCase) {
         this.mListEncryptTypeUseCase = listEncryptTypeUseCase;
-        this.mResponseBodyUseCase = responseBodyUseCase;
         this.mEncryptRelationUseCase = encryptRelationUseCase;
     }
 
@@ -131,82 +125,7 @@ public class FileTypePresenter implements FileTypeContract.Presenter {
         mCompositeSubscription.add(subscription);
     }
 
-    @Override
-    public void downloadFile(dhu.cst.zjm.encryptmvp.mvp.model.File file, ProgressListener listener) {
-        final dhu.cst.zjm.encryptmvp.mvp.model.File f = file;
-        final ProgressListener pl = listener;
-        String[] s = file.getName().split("\\.");
-        final String realName = s[0];
-        Subscription subscription = mResponseBodyUseCase.downloadFile(file.getId() + "")
-                .subscribeOn(Schedulers.io())
-                .unsubscribeOn(Schedulers.io())
-                .observeOn(Schedulers.computation())
-                .map(new Func1<ResponseBody, InputStream>() {
-                    @Override
-                    public InputStream call(ResponseBody responseBody) {
-                        return new DownloadFileResponseBody(responseBody, pl).byteStream();
-                    }
-                })
-                .observeOn(Schedulers.io())
-                .map(new Func1<InputStream, Boolean>() {
-                    @Override
-                    public Boolean call(InputStream inputStream) {
-                        String dir = FileUtil.createDir(downloadPath + f.getOwner() + "/Save/");
-                        File out = new File(dir + File.separator + realName + ".zip");
-                        if (!out.exists()) {
-                            try {
-                                out.createNewFile();
-                            } catch (IOException e) {
-                                e.printStackTrace();
-                                return false;
-                            }
-                        }
-                        try {
-                            OutputStream outputStream = null;
-                            byte[] fileReader = new byte[4096];
-                            long fileSizeDownloaded = 0;
-                            outputStream = new FileOutputStream(out);
-                            while (true) {
-                                int read = inputStream.read(fileReader);
-                                if (read == -1) {
-                                    break;
-                                }
-                                outputStream.write(fileReader, 0, read);
-                                fileSizeDownloaded += read;
-                            }
-                            outputStream.flush();
-                            outputStream.close();
-                            return true;
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                            return false;
-                        }
-                    }
-                })
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Observer<Boolean>() {
-                    @Override
-                    public void onCompleted() {
 
-                    }
-
-                    @Override
-                    public void onError(Throwable e) {
-                        e.printStackTrace();
-                        mView.downloadFileNetworkError();
-                    }
-
-                    @Override
-                    public void onNext(Boolean state) {
-                        if(state){
-                            mView.downloadFileSuccess();
-                        }else{
-                            mView.downloadFileNetworkError();
-                        }
-                    }
-                });
-        mCompositeSubscription.add(subscription);
-    }
 
     @Override
     public void decryptFile(EncryptRelation encryptRelation, dhu.cst.zjm.encryptmvp.mvp.model.File file) {

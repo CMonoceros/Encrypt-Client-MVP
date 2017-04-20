@@ -1,6 +1,5 @@
-package dhu.cst.zjm.encryptmvp.ui.activity;
+package dhu.cst.zjm.encryptmvp.mvp.view.ui.activity;
 
-import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
@@ -8,10 +7,8 @@ import android.graphics.BitmapFactory;
 import android.graphics.Point;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
-import android.os.PersistableBundle;
-import android.support.annotation.Nullable;
 import android.support.v7.app.AlertDialog;
-import android.util.Log;
+import android.view.View;
 import android.view.WindowManager;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -26,7 +23,6 @@ import butterknife.OnClick;
 import dhu.cst.zjm.encryptmvp.MyApplication;
 import dhu.cst.zjm.encryptmvp.R;
 import dhu.cst.zjm.encryptmvp.injector.component.ApplicationComponent;
-import dhu.cst.zjm.encryptmvp.injector.component.DaggerApplicationComponent;
 import dhu.cst.zjm.encryptmvp.injector.component.DaggerRegisterActivityComponent;
 import dhu.cst.zjm.encryptmvp.injector.component.RegisterActivityComponent;
 import dhu.cst.zjm.encryptmvp.injector.module.ActivityModule;
@@ -58,6 +54,16 @@ public class RegisterActivity extends BaseActivity implements RegisterContract.V
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         loadBackground();
+        setupImageView();
+    }
+
+    private void setupImageView() {
+        iv_register_verification.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                registerContractPresenter.generateVerification();
+            }
+        });
         registerContractPresenter.generateVerification();
     }
 
@@ -87,7 +93,7 @@ public class RegisterActivity extends BaseActivity implements RegisterContract.V
     @OnClick(R.id.b_register_ok)
     public void registerTry() {
         registerContractPresenter.registerTry(et_register_name.getText().toString() + "", et_register_password.getText().toString() + "",
-                et_register_confirmPassword.getText().toString() + "", et_register_verification.getText().toString()+"");
+                et_register_confirmPassword.getText().toString() + "", et_register_verification.getText().toString() + "");
     }
 
     @Override

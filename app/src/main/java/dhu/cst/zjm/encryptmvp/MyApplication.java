@@ -5,7 +5,6 @@ import android.content.Context;
 import android.os.Build;
 import android.os.StrictMode;
 
-import com.facebook.stetho.Stetho;
 import com.squareup.leakcanary.LeakCanary;
 import com.squareup.leakcanary.RefWatcher;
 
@@ -13,6 +12,7 @@ import dhu.cst.zjm.encryptmvp.injector.component.ApplicationComponent;
 import dhu.cst.zjm.encryptmvp.injector.component.DaggerApplicationComponent;
 import dhu.cst.zjm.encryptmvp.injector.module.ApplicationModule;
 import dhu.cst.zjm.encryptmvp.injector.module.NetworkModule;
+import dhu.cst.zjm.encryptmvp.util.CrashHandler;
 
 /**
  * Created by zjm on 2017/2/23.

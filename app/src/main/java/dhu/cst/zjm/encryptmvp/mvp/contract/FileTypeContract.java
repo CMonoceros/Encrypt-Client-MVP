@@ -7,7 +7,7 @@ import dhu.cst.zjm.encryptmvp.mvp.model.EncryptType;
 import dhu.cst.zjm.encryptmvp.mvp.model.File;
 import dhu.cst.zjm.encryptmvp.mvp.presenter.BasePresenter;
 import dhu.cst.zjm.encryptmvp.mvp.view.BaseView;
-import dhu.cst.zjm.encryptmvp.util.web.ProgressListener;
+import dhu.cst.zjm.encryptmvp.util.network.ProgressListener;
 
 /**
  * Created by zjm on 2017/3/3.
@@ -22,10 +22,6 @@ public interface FileTypeContract {
         void typeDetailClick(EncryptType encryptType);
 
         void setFile(File file);
-
-        void downloadFileNetworkError();
-
-        void downloadFileSuccess();
 
         void setDesKey(EncryptRelation encryptRelation);
 
@@ -50,8 +46,6 @@ public interface FileTypeContract {
         void encryptFile(EncryptRelation encryptRelation);
 
         void encryptBaseType(EncryptRelation encryptRelation,String desKey,String desLayer);
-
-        void downloadFile(File file,ProgressListener listener);
 
         void decryptFile(EncryptRelation encryptRelation,File file);
 

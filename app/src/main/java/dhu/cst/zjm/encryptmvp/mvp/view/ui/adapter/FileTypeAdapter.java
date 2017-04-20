@@ -1,4 +1,4 @@
-package dhu.cst.zjm.encryptmvp.ui.adapter;
+package dhu.cst.zjm.encryptmvp.mvp.view.ui.adapter;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
