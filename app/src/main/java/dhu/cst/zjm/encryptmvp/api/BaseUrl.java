@@ -7,6 +7,6 @@ package dhu.cst.zjm.encryptmvp.api;
 public interface BaseUrl {
     String BASEHTTP = "http://";
     String BASEWEBSOCKET = "ws://";
-    String BASEPORT = ":8080/Final/App/";
+    String BASEPORT = ":80/Final/App/";
     String BASEIP = "115.159.73.148";
 }
