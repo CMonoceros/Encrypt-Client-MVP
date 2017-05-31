@@ -4,7 +4,7 @@ Encrypt 第二版（进行中）
 
 注意
 -----
-该版已抛弃，请移步组件化版
+该版已废弃，请移步组件化版
 https://github.com/CMonoceros/Encrypt-Client-Componentize
 
 软件目的
